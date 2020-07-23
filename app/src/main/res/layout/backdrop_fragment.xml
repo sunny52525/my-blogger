@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/hide_bsb"
+        android:layout_marginEnd="15dp"
+        app:icon="@drawable/met_ic_clear"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif"
+        android:text="New"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/froces"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:fontFamily="sans-serif"
+        android:text="Post"
+        android:textColor="#FF5252"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/ode"
+        app:layout_constraintStart_toEndOf="@+id/ode" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/froces"
+        android:layout_margin="15dp"
+        android:background="?colorPrimary"
+        android:maxHeight="400dp"
+        android:orientation="vertical"
+        android:paddingLeft="72dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintCircleRadius="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/froces"
+        app:layout_constraintVertical_bias="0.0">
+
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/post_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+
+            android:textSize="34sp"
+
+            app:met_baseColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+            app:met_maxCharacters="20"
+            app:met_primaryColor="?colorAccent"
+            app:met_singleLineEllipsis="true" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/post_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Post"
+            android:maxHeight="300dp"
+            android:screenReaderFocusable="true"
+            android:scrollIndicators="right"
+            android:scrollbars="vertical"
+            app:met_baseColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+            app:met_maxCharacters="1000"
+            app:met_primaryColor="?colorAccent" />
+
+
+        <at.markushi.ui.CircleButton
+            android:id="@+id/post_it"
+            android:layout_width="64dip"
+            android:layout_height="64dip"
+            android:layout_gravity="right"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/tick"
+            app:cb_color="@color/colorPrimaryDark"
+            app:cb_pressedRingWidth="8dip" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

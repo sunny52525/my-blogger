@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_photo"
+        android:layout_width="78dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:paddingRight="16dp"
+        android:src="@drawable/user"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/duo_view_header_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:text="John Doe"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/duo_view_header_text_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/duo_view_header_text_title"
+        android:layout_alignStart="@+id/duo_view_header_text_title"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="32dp"
+        android:text="Manager"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:textStyle="italic" />
+
+    <View
+        android:id="@+id/duo_view_header_border"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_below="@+id/duo_view_header_text_sub_title"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/white"/>
+</RelativeLayout>

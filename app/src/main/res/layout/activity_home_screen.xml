@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <nl.psdcompany.duonavigationdrawer.views.DuoMenuView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:tag="@string/tag_menu"
+        app:footer="@layout/duo_view_footer"
+        app:header="@layout/duo_view_header" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:tag="@string/tag_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:padding="?attr/listPreferredItemPaddingRight">
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_post"
+                android:layout_width="90dp"
+                android:layout_height="74dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="300dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/colorPrimaryDark"
+                android:foregroundGravity="right"
+                android:src="@android:drawable/btn_plus"
+                app:cornerRadius="4dp">
+
+            </com.google.android.material.floatingactionbutton.FloatingActionButton>
+        </FrameLayout>
+
+    </LinearLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/filter_fragment"
+            android:name="com.shaun.myblogger.Fragments.BackdropFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="0dp"
+            app:behavior_skipCollapsed="true"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="40dp" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout>

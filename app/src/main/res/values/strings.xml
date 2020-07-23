@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Blogger</string>
+    <string name="client_id">580169673576-i84uhschvbpalvb557n0pq27in6u4eqa.apps.googleusercontent.com</string>
+
+    <array name="menuOptions">
+        <item>Home</item>
+        <item>Profile</item>
+        <item>Settings</item>
+        <item>About</item>
+    </array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#454a58"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:background="#454a58"
+        android:layout_height="match_parent"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:background="#21242c"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="132dp"
+                android:fontFamily="@font/caveat_brush"
+                android:text="Hello There!"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorPrimaryDark"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.138"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                android:layout_marginTop="196dp"
+                android:fontFamily="@font/caveat_brush"
+                android:text="Express You Thoughts with Us!"
+                android:textColor="#ed6b80"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.16"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_in_text"
+
+                android:text="Sign in with"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toTopOf="@+id/sign_in_google"
+                app:layout_constraintEnd_toEndOf="@+id/sign_in_google"
+                app:layout_constraintStart_toStartOf="@+id/sign_in_google"
+                app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+                app:layout_constraintVertical_bias="0.89">
+
+            </com.google.android.material.textview.MaterialTextView>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/sign_in_google"
+                android:layout_width="90dp"
+                android:layout_height="77dp"
+                android:src="@drawable/google"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+                app:layout_constraintVertical_bias="0.426">
+
+            </de.hdodenhof.circleimageview.CircleImageView>
+
+            <com.wang.avi.AVLoadingIndicatorView
+                android:id="@+id/login_anim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:indicatorName="BallClipRotatePulseIndicator"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/sign_in_google"
+                app:layout_constraintStart_toStartOf="@+id/sign_in_google"
+                app:layout_constraintTop_toBottomOf="@+id/sign_in_google" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading"
+                android:layout_width="141dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="360dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading">
+
+            </com.airbnb.lottie.LottieAnimationView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

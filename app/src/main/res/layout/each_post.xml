@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:cardCornerRadius="15dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+           <com.google.android.material.textview.MaterialTextView
+               android:id="@+id/each_post_title"
+               android:layout_width="match_parent"
+
+               android:layout_height="wrap_content"
+               android:layout_margin="10dp"
+               android:background="#000000"
+               android:textSize="30sp"
+               android:text="title"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent" />
+
+           <com.google.android.material.textview.MaterialTextView
+               android:id="@+id/each_post_post"
+               android:layout_width="352dp"
+               android:layout_height="309dp"
+               android:layout_marginTop="5dp"
+               android:layout_marginLeft="10dp"
+               android:layout_marginRight="10dp"
+               android:layout_marginBottom="10dp"
+               android:background="#000000"
+               android:maxLength="100"
+               android:maxLines="5"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/each_post_title" />
+
+            <com.ldoublem.thumbUplib.ThumbUpView
+                android:id="@+id/tpv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="5dp"
+                app:cracksColor="#33475f"
+                app:edgeColor="#9d55b8"
+                app:fillColor="#ea8010"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/each_post_post"
+                app:layout_constraintTop_toBottomOf="@+id/each_post_post"
+                app:unlikeType="1" />
+
+            <TextView
+                android:id="@+id/each_post_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tpv"
+                app:layout_constraintEnd_toEndOf="@+id/each_post_post"
+                app:layout_constraintHorizontal_bias="0.052"
+                app:layout_constraintStart_toEndOf="@+id/tpv"
+                app:layout_constraintTop_toTopOf="@+id/tpv" />
+
+           <com.google.android.material.textview.MaterialTextView
+               android:id="@+id/each_post_username"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="20dp"
+               android:layout_marginBottom="15dp"
+               android:layout_marginEnd="20dp"
+               android:text="username"
+               android:textSize="15sp"
+               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/each_post_post"
+               app:layout_constraintVertical_bias="0.18" />
+
+           <com.google.android.material.textview.MaterialTextView
+               android:id="@+id/each_post_time"
+               android:layout_marginBottom="15dp"
+               android:paddingBottom="20dp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="time"
+               app:layout_constraintEnd_toEndOf="@+id/each_post_username"
+               app:layout_constraintHorizontal_bias="1.0"
+               app:layout_constraintStart_toStartOf="@+id/each_post_username"
+               app:layout_constraintTop_toBottomOf="@+id/each_post_username" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
