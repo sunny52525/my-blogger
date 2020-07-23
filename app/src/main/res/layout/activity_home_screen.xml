@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:layout_height="match_parent">
 
 
@@ -13,6 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
+        android:background="@color/colorPrimaryDark"
         android:tag="@string/tag_menu"
         app:footer="@layout/duo_view_footer"
         app:header="@layout/duo_view_header" />
@@ -21,6 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
+        android:background="@color/colorPrimaryDark"
         android:tag="@string/tag_content">
 
         <androidx.appcompat.widget.Toolbar
@@ -34,9 +39,9 @@
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:padding="?attr/listPreferredItemPaddingRight">
+
+            android:background="@color/colorPrimaryDark"
+            android:layout_height="match_parent" >
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

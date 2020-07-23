@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -58,6 +60,8 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         hide_bsb.setOnClickListener {
 
             hideKeyboard(this)
+            post_title.setText("")
+            post_content.setText("")
         }
 
         setNames()
@@ -83,7 +87,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
     private fun SavePostToSerer() {
 
-        val sdf = SimpleDateFormat("dd/mm hh:mm")
+        val sdf = SimpleDateFormat("dd/MM hh:mm")
         val currentTime = sdf.format(Date())
 
         val postHashMap = HashMap<String, Any>()
@@ -99,6 +103,9 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
             .setValue(postHashMap)
 
+
+        post_title.setText("")
+        post_content.setText("")
 
     }
 
@@ -161,14 +168,20 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
     private fun goToFragment(
         fragment: Fragment,
-        addToBackStack: Boolean
+
+        addToBack: Boolean
     ) {
+
         val transaction =
             supportFragmentManager.beginTransaction()
-        if (addToBackStack) {
+
+
+        if (addToBack) {
             transaction.addToBackStack(null)
         }
-        transaction.add(R.id.container, fragment).commit()
+        transaction.add(R.id.container, fragment)
+            .commit()
+
     }
 
     override fun onOptionClicked(position: Int, objectClicked: Any) {
@@ -179,20 +192,23 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         mMenuAdapter?.setViewSelected(position, true)
         when (position) {
             0 -> {
+
+
+                goToFragment(FragmentHome(), false)
                 fab_add_post.visibility = View.VISIBLE
-                goToFragment(FragmentHome(), true)
             }
             1 -> {
+
                 fab_add_post.visibility = View.GONE
-                goToFragment(Fragment_profile(), true)
+                goToFragment(Fragment_profile(), false)
             }
             2 -> {
                 fab_add_post.visibility = View.GONE
-                goToFragment(FragmentSetting(), true)
+                goToFragment(FragmentSetting(), false)
             }
             3 -> {
                 fab_add_post.visibility = View.GONE
-                goToFragment(FragmentAbout(), true)
+                goToFragment(FragmentAbout(), false)
             }
             else -> goToFragment(MainFragment(), false)
         }
@@ -228,7 +244,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 bsb.state = BottomSheetBehavior.STATE_HIDDEN
 
                 // Set the trigger that will expand your view
-                fab_add_post.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
+                fab_add_post?.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
 
                 // Set the reference into class attribute (will be used latter)
                 mBottomSheetBehavior = bsb
@@ -271,12 +287,37 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
 
-        post_title.setText("")
-        post_content.setText("")
+
         Handler().postDelayed(
             {
                 hide()
             }, 300
         )
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.home_screen_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected: ${item}")
+        when (item.itemId) {
+            R.id.new_post -> {
+
+                mBottomSheetBehavior!!.isHideable = true
+
+                mBottomSheetBehavior?.let {
+                        it.state = BottomSheetBehavior.STATE_EXPANDED
+
+                }
+            }
+            else -> {
+                Toast.makeText(this, "Not Possible", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }
