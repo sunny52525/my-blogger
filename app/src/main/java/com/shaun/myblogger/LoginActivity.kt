@@ -3,7 +3,6 @@ package com.shaun.myblogger
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -26,17 +25,14 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
     val RC_SIGN_IN: Int = 1
-
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         firebaseAuth = FirebaseAuth.getInstance()
         configureGoogleSignIn()
         sign_in_google.setOnClickListener {
@@ -151,32 +147,25 @@ class LoginActivity : AppCompatActivity() {
         val user = FirebaseAuth.getInstance().currentUser
 
         if (user != null) {
-            loading.visibility = View.VISIBLE
+            loading.visibility=View.VISIBLE
             loading.playAnimation()
-            sign_in_google.visibility = View.GONE
-            sign_in_text.visibility = View.GONE
+            sign_in_google.visibility= View.GONE
+            sign_in_text.visibility=View.GONE
             val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
             val rootRef = FirebaseDatabase.getInstance().reference
-            rootRef.keepSynced(true)
             val userNameRef = rootRef.child("Users").child(firebaseUser)
             val eventListener: ValueEventListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     Log.d("TAG", "onDataChange: $dataSnapshot")
                     if (!dataSnapshot.exists()) {
-                        Handler().postDelayed({
-                            intent = Intent(this@LoginActivity, UserInfoActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }, 2000)
-
+                        intent = Intent(this@LoginActivity, UserInfoActivity::class.java)
+                        startActivity(intent)
+                        finish()
 
                     } else {
-                        Handler().postDelayed({
-                            intent = Intent(this@LoginActivity, HomeScreenActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }, 2000)
-
+                        intent = Intent(this@LoginActivity, HomeScreenActivity::class.java)
+                        startActivity(intent)
+                        finish()
 
                     }
                 }

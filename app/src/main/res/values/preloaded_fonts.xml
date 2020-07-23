@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
-        <item>@font/armata</item>
         <item>@font/assistant_light</item>
         <item>@font/caveat_brush</item>
-        <item>@font/cedarville_cursive</item>
-        <item>@font/montserrat_subrayada</item>
-        <item>@font/playfair_display</item>
-        <item>@font/shadows_into_light</item>
-        <item>@font/source_serif_pro</item>
     </array>
 </resources>

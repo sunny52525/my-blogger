@@ -1,182 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     tools:context=".Fragments.FragmentSetting">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_photo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="40dp"
-
-        android:src="@drawable/user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent">
-
-    </de.hdodenhof.circleimageview.CircleImageView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="10dp"
-
-        android:text="Name"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_photo" />
-
-    <ImageView
-        android:id="@+id/edit_name"
-        android:layout_width="31dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="1dp"
-
-        android:src="@drawable/edit1"
-        app:layout_constraintBottom_toBottomOf="@+id/materialTextView2"
-        app:layout_constraintStart_toEndOf="@+id/materialTextView2"
-        app:layout_constraintTop_toTopOf="@+id/materialTextView2">
-
-    </ImageView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/user_name_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="7dp"
-        android:text="Name here"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-
-        app:layout_constraintStart_toStartOf="@+id/materialTextView2"
-        app:layout_constraintTop_toBottomOf="@+id/materialTextView2"
-        app:layout_constraintVertical_bias="0.0">
-
-    </com.google.android.material.textview.MaterialTextView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView22"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-
-        android:layout_marginEnd="10dp"
-        android:text="Bio"
-
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name_settings" />
-
-    <ImageView
-        android:id="@+id/edit_description"
-        android:layout_width="31dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="1dp"
-        android:src="@drawable/edit1"
-        app:layout_constraintBottom_toBottomOf="@+id/materialTextView22"
-        app:layout_constraintStart_toEndOf="@+id/materialTextView22"
-        app:layout_constraintTop_toTopOf="@+id/materialTextView22">
-
-    </ImageView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/user_name_bio"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="7dp"
-        android:text="Bio here"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-
-        app:layout_constraintStart_toStartOf="@+id/materialTextView22"
-        app:layout_constraintTop_toBottomOf="@+id/materialTextView22"
-        app:layout_constraintVertical_bias="0.0">
-
-    </com.google.android.material.textview.MaterialTextView>
+    <!-- TODO: Update blank fragment layout -->
 
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView222"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+    <Button
+        android:layout_width="272dp"
+        android:text="SETTINGSSS"
+        android:layout_height="282dp">
 
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="10dp"
-        android:text="Username"
-        android:textColor="@android:color/white"
 
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name_bio" />
+    </Button>
 
-    <ImageView
-        android:id="@+id/edit_username"
-        android:layout_width="31dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="1dp"
-        android:src="@drawable/edit1"
-        app:layout_constraintBottom_toBottomOf="@+id/materialTextView222"
-        app:layout_constraintStart_toEndOf="@+id/materialTextView222"
-        app:layout_constraintTop_toTopOf="@+id/materialTextView222">
-
-    </ImageView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/user_name_username"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="7dp"
-        android:text="Username here"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-
-        app:layout_constraintStart_toStartOf="@+id/materialTextView222"
-        app:layout_constraintTop_toBottomOf="@+id/materialTextView222"
-        app:layout_constraintVertical_bias="0.0">
-
-    </com.google.android.material.textview.MaterialTextView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/remember_changing_details_here_won_t_reflect_in_your_old_posts"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </com.google.android.material.textview.MaterialTextView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

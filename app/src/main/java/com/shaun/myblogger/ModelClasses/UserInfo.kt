@@ -5,25 +5,20 @@ class UserInfo{
     private var name=""
     private  var username=""
     private var postIDs:ArrayList<String>?=null
-    private var Pphoto = ""
-    private var description = ""
+    private var Pphoto=""
     constructor()
     constructor(
         id: String,
         name: String,
         username: String,
         postIDs: ArrayList<String>?,
-        Pphoto: String,
-        description: String
+        Pphoto: String
     ) {
         this.id = id
         this.name = name
         this.username = username
-        if (postIDs != null) {
-            this.postIDs = postIDs
-        }
+        this.postIDs = postIDs
         this.Pphoto = Pphoto
-        this.description = description
     }
 
 
@@ -33,7 +28,6 @@ class UserInfo{
             name =$name
             username = $username
             profile Photo = $Pphoto
-            Bio = $description
         """.trimIndent()
     }
 
@@ -45,7 +39,6 @@ class UserInfo{
     fun getname():String{
         return name
     }
-
     fun setname(name: String) {
         this.name = name
     }
@@ -55,27 +48,20 @@ class UserInfo{
         this.username = username
     }
 
-    fun getPphoto() = Pphoto
-    fun setPphoto(profile: String) {
-        this.Pphoto = profile
+    fun getPprofile() = Pphoto
+    fun setPprofile(profile: String) {
+        this.Pphoto=profile
     }
 
-    fun getpostIDs() = postIDs
-    fun setpostIDs(posts: ArrayList<String>?) {
-        if (posts != null) {
-            this.postIDs = posts
-        }
+    fun getpostIDs()=postIDs
+    fun setpostIDs(posts :ArrayList<String>?){
+        this.postIDs=posts
+    }
+    fun addPost(postId: String){
+        this.postIDs!!.add(postId)
     }
 
-
-    fun removePost(postId: String) {
+    fun removePost(postId: String){
         this.postIDs!!.remove(postId)
     }
-
-    fun getdescription() = description
-    fun setdescription(Bio: String) {
-        this
-            .description = Bio
-    }
-
 }
