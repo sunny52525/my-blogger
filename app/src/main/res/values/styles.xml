@@ -1,7 +1,9 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+
         <!-- Customize your theme here. -->
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="colorPrimary">#404552</item>
         <item name="android:actionMenuTextColor">#ffffff</item>
         <item name="android:textColorPrimary">#ffffff</item>
@@ -11,4 +13,16 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:textColor">#ffff</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#ffff</item>
+    </style>
 </resources>

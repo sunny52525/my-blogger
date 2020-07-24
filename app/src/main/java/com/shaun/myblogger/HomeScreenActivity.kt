@@ -25,7 +25,7 @@ import com.shaun.myblogger.Fragments.FragmentHome
 import com.shaun.myblogger.Fragments.FragmentSetting
 import com.shaun.myblogger.Fragments.Fragment_profile
 import com.shaun.myblogger.ModelClasses.UserInfo
-import kotlinx.android.synthetic.main.activity_home_screen.*
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.backdrop_fragment.*
 import kotlinx.android.synthetic.main.duo_view_header.*
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout
@@ -62,6 +62,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
             hideKeyboard(this)
             post_title.setText("")
+
             post_content.setText("")
         }
 
@@ -93,6 +94,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
         val postHashMap = HashMap<String, Any>()
         val key = FirebaseDatabase.getInstance().getReference("posts").push().key
+
         postHashMap["id"] = key.toString()
         postHashMap["nameOP"] = UserData!!.getname()
         postHashMap["username"] = UserData!!.getusername()
@@ -100,6 +102,12 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         postHashMap["title"] = post_title.text.toString()
         postHashMap["content"] = post_content.text.toString()
         postHashMap["like_count"] = 0
+
+
+        if (checkbox.isChecked) {
+            postHashMap["nameOP"] = "Anonymous"
+            postHashMap["username"] = "anonymous"
+        } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
 
         val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
             .setValue(postHashMap)
@@ -125,6 +133,13 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 duo_view_header_text_sub_title.text = UserData!!.getusername()
                 duo_view_header_text_title.text = UserData.getname()
                 Log.d(TAG, "onDataChange1: $UserData")
+                val url = UserData.getPphoto()
+                if (url.isNotEmpty()) {
+                    Picasso.get().load(url)
+                        .placeholder(resources.getDrawable(R.drawable.user))
+                        .into(profile_photo)
+                }
+
             }
 
         })
@@ -172,6 +187,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
         addToBack: Boolean
     ) {
+        setNames()
 
         val transaction =
             supportFragmentManager.beginTransaction()
@@ -196,19 +212,16 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
 
                 goToFragment(FragmentHome(), false)
-                fab_add_post.visibility = View.VISIBLE
+
             }
             1 -> {
-
-                fab_add_post.visibility = View.GONE
                 goToFragment(Fragment_profile(), false)
             }
             2 -> {
-                fab_add_post.visibility = View.GONE
                 goToFragment(FragmentSetting(), false)
             }
             3 -> {
-                fab_add_post.visibility = View.GONE
+
                 goToFragment(FragmentAbout(), false)
             }
             else -> goToFragment(MainFragment(), false)
@@ -245,7 +258,6 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 bsb.state = BottomSheetBehavior.STATE_HIDDEN
 
                 // Set the trigger that will expand your view
-                fab_add_post?.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
 
                 // Set the reference into class attribute (will be used latter)
                 mBottomSheetBehavior = bsb
@@ -275,6 +287,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             super.onBackPressed()
         }
 
+
     }
 
     fun hideKeyboard(activity: Activity) {
@@ -292,6 +305,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         Handler().postDelayed(
             {
                 hide()
+                checkbox.isChecked = false
             }, 300
         )
     }

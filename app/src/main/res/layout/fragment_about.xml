@@ -6,12 +6,4 @@
     tools:context=".Fragments.FragmentAbout">
 
 
-    <Button
-        android:layout_width="272dp"
-        android:text="ABout"
-        android:layout_height="282dp">
-
-
-    </Button>
-
 </FrameLayout>

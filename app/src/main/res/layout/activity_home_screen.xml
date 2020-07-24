@@ -44,21 +44,7 @@
             android:layout_height="match_parent" >
 
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_add_post"
-                android:layout_width="90dp"
-                android:layout_height="74dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="300dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/colorPrimaryDark"
-                android:foregroundGravity="right"
-                android:src="@android:drawable/btn_plus"
-                app:cornerRadius="4dp">
 
-            </com.google.android.material.floatingactionbutton.FloatingActionButton>
         </FrameLayout>
 
     </LinearLayout>
