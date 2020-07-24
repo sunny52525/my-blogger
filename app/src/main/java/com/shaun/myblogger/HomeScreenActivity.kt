@@ -37,6 +37,7 @@ import java.util.*
 private const val TAG = "HOMESCRENN"
 
 class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener {
+
     private var mMenuAdapter: MenuAdapter? = null
     private var mViewHolder: ViewHolder? = null
     val ref: FirebaseDatabase? = null
@@ -82,7 +83,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         // Show main fragment in container
         goToFragment(FragmentHome(), false)
         mMenuAdapter!!.setViewSelected(0, true)
-        setTitle(mTitles.get(0))
+        title = mTitles.get(0)
     }
 
     private fun SavePostToSerer() {
@@ -119,10 +120,10 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val UserData =
-                    snapshot.getValue(com.shaun.myblogger.ModelClasses.UserInfo::class.java)
+                    snapshot.getValue(UserInfo::class.java)
                 this@HomeScreenActivity.UserData = UserData
                 duo_view_header_text_sub_title.text = UserData!!.getusername()
-                duo_view_header_text_title.text = UserData!!.getname()
+                duo_view_header_text_title.text = UserData.getname()
                 Log.d(TAG, "onDataChange1: $UserData")
             }
 
@@ -239,7 +240,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val fragment = supportFragmentManager.findFragmentById(R.id.filter_fragment)
         fragment?.let {
             // Get the BottomSheetBehavior from the fragment view
-            BottomSheetBehavior.from(fragment.requireView())?.let { bsb ->
+            BottomSheetBehavior.from(fragment.requireView()).let { bsb ->
                 // Set the initial state of the BottomSheetBehavior to HIDDEN
                 bsb.state = BottomSheetBehavior.STATE_HIDDEN
 
@@ -280,7 +281,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val imm: InputMethodManager =
             activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         //Find the currently focused view, so we can grab the correct window token from it.
-        var view: View? = activity.getCurrentFocus()
+        var view: View? = activity.currentFocus
         //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
             view = View(activity)
@@ -319,5 +320,6 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         }
         return super.onOptionsItemSelected(item)
     }
+
 
 }

@@ -1,6 +1,5 @@
 package com.shaun.myblogger.adapters
 
-import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.FirebaseDatabase
 import com.ldoublem.thumbUplib.ThumbUpView
-import com.shaun.myblogger.InsideActivities.FullBlogActivity
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.R
 import java.lang.Integer.parseInt
@@ -28,8 +26,11 @@ class HomeRecyclerViewAdapter(view: View) : RecyclerView.ViewHolder(view) {
 
 private const val TAG = "VIEW ADAPTER"
 
-class home_recyclerView(private var posts: List<PostData>) :
+class home_recyclerView(private var posts: List<PostData>, private val listener: OnPostClicked) :
     RecyclerView.Adapter<HomeRecyclerViewAdapter>() {
+    interface OnPostClicked {
+        fun onPostClicked(data: PostData)
+    }
 
     fun loadNewData(newPostData: List<PostData>) {
         Log.d(TAG, "loadNewData: Adapter Called with data")
@@ -83,11 +84,10 @@ class home_recyclerView(private var posts: List<PostData>) :
 
             }
 
-            holder.postContent!!.setOnClickListener {
+            holder.postContent.setOnClickListener {
 
-                val intent=Intent(holder.itemView.context,FullBlogActivity::class.java)
 
-                holder.itemView.context.startActivity(intent)
+                listener.onPostClicked(currentPost)
 
             }
 

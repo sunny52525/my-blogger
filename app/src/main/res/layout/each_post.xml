@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#000000">
 
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/each_post_title"
                 android:layout_width="match_parent"
-                android:padding="5dp"
-
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+
                 android:background="#000000"
-                android:text="title"
+                android:fontFamily="@font/caveat_brush"
                 android:maxLength="20"
+                android:padding="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="10dp"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,16 +35,18 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/each_post_post"
-                android:layout_width="match_parent"
-                android:padding="5dp"
-
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="50dp"
                 android:layout_marginLeft="10dp"
+
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
                 android:background="#000000"
+                android:fontFamily="@font/playfair_display"
+                android:minHeight="50dp"
+                android:padding="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -98,6 +103,17 @@
                 app:layout_constraintStart_toStartOf="@+id/each_post_username"
                 app:layout_constraintTop_toBottomOf="@+id/each_post_username" />
 
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/each_post_time"
+                app:layout_constraintVertical_bias="0.0">
+
+            </com.google.android.material.button.MaterialButton>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

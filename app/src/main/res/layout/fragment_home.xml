@@ -3,27 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresg_layout_home"
     android:layout_width="match_parent"
+    android:background="@android:color/black"
     android:layout_height="match_parent"
     tools:context=".Fragments.FragmentHome">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="-10dp">
+
 
         <com.dinuscxj.refresh.RecyclerRefreshLayout
             android:layout_width="match_parent"
+            android:id="@+id/refresh_layout"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
+
                 android:id="@+id/recycler_view_home"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="match_parent" />
 
         </com.dinuscxj.refresh.RecyclerRefreshLayout>
-
-
-    </FrameLayout>
-
 
 </RelativeLayout>
