@@ -63,5 +63,5 @@ dependencies {
     api 'com.github.markushi:circlebutton:1.1'
 
     implementation 'com.dinuscxj:recyclerrefreshlayout:2.0.5'
-
+    api 'com.github.huzenan:EasyTransition:v1.0.0'
 }
