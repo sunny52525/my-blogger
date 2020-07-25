@@ -55,6 +55,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
     var UserData: UserInfo? = null
     var postCover: Uri? = null
     private var mTitles = ArrayList<String>()
+    private var imageUrls = ArrayList<String>()
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +72,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             if (post_title.text!!.isNotEmpty() && post_content.text!!.isNotEmpty()) {
                 hideKeyboard(this)
                 SavePostToSerer()
+
             } else {
                 if (post_title.text!!.isEmpty())
                     Toast.makeText(this, "Title Can't Be empty", Toast.LENGTH_SHORT).show()
@@ -87,6 +89,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             post_content.setText("")
         }
         select_img.setOnClickListener {
+
             pickImg()
         }
 
@@ -124,27 +127,24 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         postHashMap["username"] = UserData!!.getusername()
         postHashMap["time"] = currentTime
         postHashMap["title"] = post_title.text.toString()
-        postHashMap["content"] = post_content.text.toString()
+        postHashMap["content"] = post_content.text.toString() + "    "
         postHashMap["like_count"] = 0
-
+        postHashMap["photosInpost"] = imageUrls
         if (checkbox.isChecked) {
             postHashMap["nameOP"] = "Anonymous"
             postHashMap["username"] = "anonymous"
         } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
         val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
 
-        if (postCover == null)
             reference.setValue(postHashMap)
-        else {
-            uploadImg(postHashMap, reference)
-        }
+
 
         post_title.setText("")
         post_content.setText("")
 
     }
 
-    private fun uploadImg(postMap: HashMap<String, Any>, reference: DatabaseReference) {
+    private fun uploadImg(imgUri: Uri) {
         storageRef = FirebaseStorage.getInstance().reference.child("Post Images")
         val progressBar = ProgressDialog(this)
         progressBar.setMessage("Please wait,Posting..")
@@ -153,7 +153,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
         var uploadTask: StorageTask<*>
 
-        val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, postCover)
+        val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imgUri)
         val baos = ByteArrayOutputStream()
         bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
         var data: ByteArray? = baos.toByteArray()
@@ -170,11 +170,9 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             if (it.isSuccessful) {
                 val downloadUrl = it.result
                 val url = downloadUrl.toString()
+                post_content.text!!.append("\n[img*]" + "\n")
+                imageUrls.add(url)
 
-                val map = postMap
-                map["postCover"] = url
-                reference.setValue(map)
-                postCover = null
                 progressBar.dismiss()
             }
         }
@@ -194,6 +192,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
             postCover = data.data
+            uploadImg(postCover!!)
             Log.d(TAG, "onActivityResult: ${postCover}")
         }
     }

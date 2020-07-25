@@ -61,8 +61,11 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
             val currentPost = posts[position]
 
             holder.postTitle.text = currentPost.gettitle()
-            holder.postContent.text = currentPost.getcontent()
-                .substring(0, min(240, currentPost.getcontent().length)) + "...."
+            holder.postContent.text = (currentPost.getcontent()
+                .substring(0, min(240, currentPost.getcontent().length)) + "....").replace(
+                "[img*]",
+                ""
+            )
             holder.likeCount.text = currentPost.getlike_count().toString()
             holder.postUsername.text = currentPost.getusername()
             holder.postTime.text = currentPost.gettime()
