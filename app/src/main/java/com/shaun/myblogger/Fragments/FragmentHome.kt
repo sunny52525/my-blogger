@@ -20,6 +20,7 @@ import com.hzn.lib.EasyTransition
 import com.hzn.lib.EasyTransitionOptions
 import com.shaun.myblogger.InsideActivities.FullBlogActivity
 import com.shaun.myblogger.ModelClasses.PostData
+import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
 import com.shaun.myblogger.adapters.home_recyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -114,6 +115,16 @@ class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
         val intent = Intent(this.context, FullBlogActivity::class.java)
         intent.putExtra("data", data)
         EasyTransition.startActivity(intent, options)
+    }
+
+    override fun onProfileClicked(userId: String) {
+        if (userId == "anonymous")
+            return
+        val intent = Intent(context, ProfileActivity::class.java)
+        intent.putExtra("user_id", userId)
+        startActivity(intent)
+
+
     }
 
 

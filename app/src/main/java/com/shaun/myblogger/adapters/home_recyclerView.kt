@@ -30,6 +30,7 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
     RecyclerView.Adapter<HomeRecyclerViewAdapter>() {
     interface OnPostClicked {
         fun onPostClicked(data: PostData)
+        fun onProfileClicked(userId: String)
     }
 
     fun loadNewData(newPostData: List<PostData>) {
@@ -92,9 +93,14 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
             }
             holder.postContent.setOnClickListener(eachPostClickListener)
             holder.postTitle.setOnClickListener(eachPostClickListener)
-            holder.postTime.setOnClickListener(eachPostClickListener)
             holder.likeCount.setOnClickListener(eachPostClickListener)
-            holder.postUsername.setOnClickListener(eachPostClickListener)
+
+            val viewProfileListener = View.OnClickListener {
+                listener.onProfileClicked(currentPost.getuserId())
+            }
+            holder.postUsername.setOnClickListener(viewProfileListener)
+            holder.postTime.setOnClickListener(viewProfileListener)
+
             Log.d(TAG, "onBindViewHolder: $currentPost")
         }
 

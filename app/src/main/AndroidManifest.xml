@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".ViewFullImage" />
         <activity
             android:name=".FirebaseHandler"
@@ -28,7 +29,7 @@
             android:exported="true" />
         <activity android:name=".HomeScreenActivity" />
         <activity android:name=".UserInfoActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

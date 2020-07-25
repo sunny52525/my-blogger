@@ -278,7 +278,7 @@ class FullBlogActivity : AppCompatActivity() {
             true
         )
         val dr: Drawable = BitmapDrawable(resources, bitmap)
-        dr.setBounds(0, 0, bitmap.width, bitmap.height)
+        dr.setBounds(0, 0, bitmap.width - 50, bitmap.height - 50)
         val imageSpannable: Spannable = SpannableString("\uFFFC")
         val imgSpan = ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM)
         imageSpannable.setSpan(imgSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

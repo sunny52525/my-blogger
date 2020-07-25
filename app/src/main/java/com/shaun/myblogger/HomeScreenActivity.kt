@@ -41,6 +41,7 @@ import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 private const val TAG = "HOMESCRENN"
@@ -134,14 +135,55 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             postHashMap["nameOP"] = "Anonymous"
             postHashMap["username"] = "anonymous"
         } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
-        val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
+        var reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
 
-            reference.setValue(postHashMap)
+        reference.setValue(postHashMap).addOnCompleteListener {
+            saveId(key)
+        }
+
+
 
 
         post_title.setText("")
         post_content.setText("")
 
+    }
+
+    private fun saveId(key: String) {
+        val reference = FirebaseDatabase.getInstance().reference.child("Users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userData: UserInfo? = snapshot.getValue(UserInfo::class.java)
+                var postArray = userData!!.getpostIDs()
+                Log.d(TAG, "onDataChange: $postArray")
+                if (postArray == null) {
+                    val array = ArrayList<String>(1)
+                    array.add(key)
+                    val ref = FirebaseDatabase.getInstance().reference.child("Users")
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
+                        .setValue(array)
+
+                } else {
+
+
+                    postArray.add(0, key)
+                }
+
+
+                val ref = FirebaseDatabase.getInstance().reference.child("Users")
+                    .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
+                    .setValue(postArray)
+                Log.d(TAG, "onDataChange: $postArray")
+
+
+            }
+
+        })
     }
 
     private fun uploadImg(imgUri: Uri) {
@@ -361,6 +403,8 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         // With the reference of the BottomSheetBehavior stored
         if (mBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
             hide()
+            post_content.setText("")
+            post_title.setText("")
 
         } else {
             super.onBackPressed()

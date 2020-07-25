@@ -19,7 +19,9 @@ class UserInfo{
         this.id = id
         this.name = name
         this.username = username
-        this.postIDs = postIDs
+        if (postIDs != null) {
+            this.postIDs = postIDs
+        }
         this.Pphoto = Pphoto
         this.description = description
     }
@@ -60,12 +62,11 @@ class UserInfo{
 
     fun getpostIDs() = postIDs
     fun setpostIDs(posts: ArrayList<String>?) {
-        this.postIDs = posts
+        if (posts != null) {
+            this.postIDs = posts
+        }
     }
 
-    fun addPost(postId: String) {
-        this.postIDs!!.add(postId)
-    }
 
     fun removePost(postId: String) {
         this.postIDs!!.remove(postId)

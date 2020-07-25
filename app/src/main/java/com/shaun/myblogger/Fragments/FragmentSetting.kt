@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +31,7 @@ import com.shaun.myblogger.ViewFullImage
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_setting.*
+import java.io.ByteArrayOutputStream
 
 
 private const val TAG = "SETTING FRAG"
@@ -130,9 +133,24 @@ class FragmentSetting : Fragment() {
         progressBar.setMessage("Image Uploading.Please wait..........")
         progressBar.show()
         if (imageuri != null) {
+
+
+//            val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imgUri)
+//            val baos = ByteArrayOutputStream()
+//            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+//            var data: ByteArray? = baos.toByteArray()
+//
+//            uploadTask = fileRef.putBytes(data!!)
+
             val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
             var uploadTask: StorageTask<*>
-            uploadTask = fileRef.putFile(imageuri!!)
+
+            val bmp: Bitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver, imageuri)
+            val baos = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+            var data: ByteArray? = baos.toByteArray()
+
+            uploadTask = fileRef.putBytes(data!!)
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
                 if (!it.isSuccessful) {
                     it.exception?.let {
