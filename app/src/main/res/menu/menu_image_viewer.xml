@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/image_viewer_delete"
+        android:title="Delete Image" />
+    <item
+        android:id="@+id/image_save_to_device"
+        android:title="Save to Device" />
+</menu>
