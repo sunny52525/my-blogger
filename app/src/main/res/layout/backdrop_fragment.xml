@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:hint="Title"
 
-            android:textSize="34sp"
+            android:textSize="30sp"
 
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
@@ -132,17 +132,33 @@
             app:met_maxCharacters="1000"
             app:met_primaryColor="?colorAccent" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
-        <at.markushi.ui.CircleButton
-            android:id="@+id/post_it"
-            android:layout_width="64dip"
-            android:layout_height="64dip"
-            android:layout_gravity="right"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/tick"
-            app:cb_color="@color/colorPrimaryDark"
-            app:cb_pressedRingWidth="8dip" />
+            <ImageView
+                android:id="@+id/select_img"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+
+                android:src="@drawable/select">
+
+            </ImageView>
+
+            <at.markushi.ui.CircleButton
+                android:id="@+id/post_it"
+                android:layout_width="51dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="203dp"
+                android:layout_toRightOf="@id/select_img"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/tick"
+                app:cb_color="@color/colorPrimaryDark"
+                app:cb_pressedRingWidth="8dip" />
+        </RelativeLayout>
+
 
     </LinearLayout>
 

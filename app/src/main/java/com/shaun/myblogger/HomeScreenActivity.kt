@@ -2,9 +2,13 @@ package com.shaun.myblogger
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -14,12 +18,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import com.shaun.myblogger.Fragments.FragmentAbout
 import com.shaun.myblogger.Fragments.FragmentHome
 import com.shaun.myblogger.Fragments.FragmentSetting
@@ -31,17 +38,22 @@ import kotlinx.android.synthetic.main.duo_view_header.*
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 private const val TAG = "HOMESCRENN"
 
 class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener {
-
+    private val RequestCode = 438
+    var userRef: DatabaseReference? = null
+    private var storageRef: StorageReference? = null
     private var mMenuAdapter: MenuAdapter? = null
     private var mViewHolder: ViewHolder? = null
     val ref: FirebaseDatabase? = null
     var UserData: UserInfo? = null
+    var postCover: Uri? = null
     private var mTitles = ArrayList<String>()
 
     @SuppressLint("RestrictedApi")
@@ -55,15 +67,27 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         )
         post_it.setOnClickListener {
 
-            hideKeyboard(this)
-            SavePostToSerer()
+
+            if (post_title.text!!.isNotEmpty() && post_content.text!!.isNotEmpty()) {
+                hideKeyboard(this)
+                SavePostToSerer()
+            } else {
+                if (post_title.text!!.isEmpty())
+                    Toast.makeText(this, "Title Can't Be empty", Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(this, "Body Can't Be empty", Toast.LENGTH_SHORT).show()
+
+            }
         }
         hide_bsb.setOnClickListener {
 
             hideKeyboard(this)
             post_title.setText("")
-
+            postCover = null
             post_content.setText("")
+        }
+        select_img.setOnClickListener {
+            pickImg()
         }
 
         setNames()
@@ -87,6 +111,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         title = mTitles.get(0)
     }
 
+
     private fun SavePostToSerer() {
 
         val sdf = SimpleDateFormat("dd/MM hh:mm")
@@ -94,7 +119,6 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
         val postHashMap = HashMap<String, Any>()
         val key = FirebaseDatabase.getInstance().getReference("posts").push().key
-
         postHashMap["id"] = key.toString()
         postHashMap["nameOP"] = UserData!!.getname()
         postHashMap["username"] = UserData!!.getusername()
@@ -103,19 +127,75 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         postHashMap["content"] = post_content.text.toString()
         postHashMap["like_count"] = 0
 
-
         if (checkbox.isChecked) {
             postHashMap["nameOP"] = "Anonymous"
             postHashMap["username"] = "anonymous"
         } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
-
         val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
-            .setValue(postHashMap)
 
+        if (postCover == null)
+            reference.setValue(postHashMap)
+        else {
+            uploadImg(postHashMap, reference)
+        }
 
         post_title.setText("")
         post_content.setText("")
 
+    }
+
+    private fun uploadImg(postMap: HashMap<String, Any>, reference: DatabaseReference) {
+        storageRef = FirebaseStorage.getInstance().reference.child("Post Images")
+        val progressBar = ProgressDialog(this)
+        progressBar.setMessage("Please wait,Posting..")
+        progressBar.show()
+
+        val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+        var uploadTask: StorageTask<*>
+
+        val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, postCover)
+        val baos = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+        var data: ByteArray? = baos.toByteArray()
+
+        uploadTask = fileRef.putBytes(data!!)
+        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+            if (!it.isSuccessful) {
+                it.exception?.let {
+                    throw  it
+                }
+            }
+            return@Continuation fileRef.downloadUrl
+        }).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val downloadUrl = it.result
+                val url = downloadUrl.toString()
+
+                val map = postMap
+                map["postCover"] = url
+                reference.setValue(map)
+                postCover = null
+                progressBar.dismiss()
+            }
+        }
+
+
+    }
+
+
+    private fun pickImg() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, RequestCode)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
+            postCover = data.data
+            Log.d(TAG, "onActivityResult: ${postCover}")
+        }
     }
 
     private fun setNames() {
@@ -309,6 +389,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             }, 300
         )
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.home_screen_menu, menu)
@@ -323,7 +404,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 mBottomSheetBehavior!!.isHideable = true
 
                 mBottomSheetBehavior?.let {
-                        it.state = BottomSheetBehavior.STATE_EXPANDED
+                    it.state = BottomSheetBehavior.STATE_EXPANDED
 
                 }
             }
