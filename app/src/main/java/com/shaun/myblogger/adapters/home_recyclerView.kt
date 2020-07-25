@@ -78,19 +78,20 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
                 likeMap["like_count"] = (parseLong(holder.likeCount.text.toString()))
                 val ref = FirebaseDatabase.getInstance().reference.child("posts")
                     .child(currentPost.getid()).updateChildren(
-                    likeMap as Map<String, Any>
-                )
+                        likeMap as Map<String, Any>
+                    )
 
 
             }
 
-            holder.postContent.setOnClickListener {
-
-
+            val eachPostClickListener = View.OnClickListener {
                 listener.onPostClicked(currentPost)
-
             }
-
+            holder.postContent.setOnClickListener(eachPostClickListener)
+            holder.postTitle.setOnClickListener(eachPostClickListener)
+            holder.postTime.setOnClickListener(eachPostClickListener)
+            holder.likeCount.setOnClickListener(eachPostClickListener)
+            holder.postUsername.setOnClickListener(eachPostClickListener)
             Log.d(TAG, "onBindViewHolder: $currentPost")
         }
 
