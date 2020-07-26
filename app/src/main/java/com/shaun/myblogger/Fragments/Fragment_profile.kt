@@ -54,7 +54,7 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
                 name_profile.text = currentUserData!!.getname()
                 username_profile.text = currentUserData!!.getusername()
                 bio_profile.text = currentUserData?.getdescription()
-                Picasso.get().load(currentUserData?.getPphoto())
+                Picasso.get().load(getPhoto(currentUserData?.getPphoto()!!))
                     .placeholder(resources.getDrawable(R.drawable.user))
                     .error(resources.getDrawable(R.drawable.user)).into(profile_photo_profile)
 
@@ -127,6 +127,17 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
 
     }
 
+    private fun getPhoto(pphoto: String): String? {
+        if (pphoto.isEmpty()) {
+            Log.d(
+                "TAG",
+                "onDataChange111: ${resources.getString(R.string.defaultProfile)
+                    .replace("&amp;", "")}"
+            )
+            return resources.getString(R.string.defaultProfile).replace("&amp;", "")
+        }
+        return pphoto
+    }
 
     override fun onPostClicked(data: PostData) {
         Log.d(TAG, "onPostClicked: LISTENER")

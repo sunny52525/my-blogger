@@ -1,20 +1,14 @@
 package com.shaun.myblogger.InsideActivities
 
+import GlideTarget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.text.Spannable
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.DynamicDrawableSpan
+import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,6 +19,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -32,18 +28,18 @@ import com.google.firebase.database.FirebaseDatabase
 import com.hzn.lib.EasyTransition
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.R
+import com.squareup.picasso.Picasso
+import io.square1.richtextlib.ui.RichContentView
+import io.square1.richtextlib.v2.RichTextV2
 import kotlinx.android.synthetic.main.activity_full_blog.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URL
 
 
 class FullBlogActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
     var finishEnter = false
     lateinit var postData: PostData
+
+    lateinit var contentView: RichContentView
     private var layoutAbout: androidx.core.widget.NestedScrollView? = null
     lateinit var collapsingToolbar: CollapsingToolbarLayout
 //    lateinit var imgBitmaps:ArrayList<Bitmap>
@@ -54,6 +50,28 @@ class FullBlogActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_blog)
+
+        contentView =
+            findViewById<RichContentView>(R.id.post_content_full)
+
+        contentView.setOnSpanClickedObserver { span ->
+            var action = span.action
+            action = if (TextUtils.isEmpty(action)) " no action" else action
+            Toast.makeText(
+                this,
+                action,
+                Toast.LENGTH_LONG
+            ).show()
+            true
+        }
+        contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
+            Glide.with(this)
+                .load(image)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(GlideTarget(this, urlBitmapSpan))
+        }
+
 
         val intent = intent
         val data: PostData = intent.getSerializableExtra("data") as PostData
@@ -75,7 +93,7 @@ class FullBlogActivity : AppCompatActivity() {
                     finishEnter = true
 
 
-                    initOtherViews(data.getcontent(), data.getphotosInpost())
+                    initOtherViews(data.getcontent(), data.getpostCover())
                 }
             })
 
@@ -100,10 +118,20 @@ class FullBlogActivity : AppCompatActivity() {
         tvName!!.title = heading
     }
 
-    private fun initOtherViews(text: String, imgLinks: ArrayList<String>?) {
+    private fun initOtherViews(text: String, imgLinks: String) {
+        if (imgLinks.isNotEmpty()) {
+            Picasso.get().load(imgLinks).into(header)
+        }
+
+
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
-        post_content_full.text = text.replace("[img*]", "")
+//        post_content_full.text = text.replace("[img*]", "")
+
+        var str = RichTextV2.fromHtml(applicationContext, text)
+
+//        val v= RichTextDocumentElement.TextBuilder(editor!!.getHtml()).build()
+        contentView.setText(str)
 
         Handler().postDelayed({
 
@@ -116,71 +144,66 @@ class FullBlogActivity : AppCompatActivity() {
             .alpha(1f)
             .translationY(0f)
 
-        if (imgLinks != null)
-            initContentWithImage(text, imgLinks)
+//        if (imgLinks != null)
+//            initContentWithImage(text, imgLinks)
 
 
     }
 
-    private fun initContentWithImage(text: String, imgLinks: ArrayList<String>) {
-        var imgBitmap = ArrayList<Bitmap>(imgLinks.size)
-        Log.d("TAG", "initContentWithImage: $imgLinks")
-        GlobalScope.launch {
-            for (i in 0..imgLinks.size - 1) {
-                try {
-                    imgBitmap.add(
-                        BitmapFactory.decodeStream(
-                            URL(imgLinks[i]).openConnection().getInputStream()
-                        )
-                    )
-                } catch (e: Exception) {
-                    Log.d("TAG", "initContentWithImage: ${e.message}")
-                }
-            }
-            withContext(Dispatchers.Main) {
-                parseContent(text, imgBitmap)
-            }
-        }
-
-
-    }
-
-    private fun parseContent(text: String, imgBitmaps: ArrayList<Bitmap>) {
-        if (imgBitmaps == null) {
-            Log.d("TAG", "parseContent: Returned")
-            return
-        }
-        var count = 0
-        val final = SpannableStringBuilder()
-        var i = 0
-
-        while (i <= text.length - 1) {
-
-            if (text[i] == '[') {
-                try {
-                    if (text[i + 1] == 'i' && text[i + 2] == 'm' && text[i + 4] == '*') {
-
-                        final.append(imgBitmaps.get(count).let { getImageSpannable(it) })
-
-                        count++
-                        i += 5
-                    }
-                } catch (e: java.lang.Exception) {
-                    Log.d("TAG", "parseContent: ${e.message}")
-                }
-            } else
-                final.append(text[i])
-            i++
-        }
-//        i-=1
-//        if (text[text.length - 1] != ']') {
-//            for (i in 4 downTo 1)
-//                final.append(text[text.length - i])
+//    private fun initContentWithImage(text: String, imgLinks: ArrayList<String>) {
+//        var imgBitmap = ArrayList<Bitmap>(imgLinks.size)
+//        Log.d("TAG", "initContentWithImage: $imgLinks")
+//        GlobalScope.launch {
+//            for (i in 0..imgLinks.size - 1) {
+//                try {
+//                    imgBitmap.add(
+//                        BitmapFactory.decodeStream(
+//                            URL(imgLinks[i]).openConnection().getInputStream()
+//                        )
+//                    )
+//                } catch (e: Exception) {
+//                    Log.d("TAG", "initContentWithImage: ${e.message}")
+//                }
+//            }
+//            withContext(Dispatchers.Main) {
+//                parseContent(text, imgBitmap)
+//            }
 //        }
-
-        Log.d("TAG", "parseContent: $final")
-        post_content_full.text = final
-    }
+//
+//
+//    }
+//
+//    private fun parseContent(text: String, imgBitmaps: ArrayList<Bitmap>) {
+//        if (imgBitmaps == null) {
+//            Log.d("TAG", "parseContent: Returned")
+//            return
+//        }
+//        var count = 0
+//        val final = SpannableStringBuilder()
+//        var i = 0
+//
+//        while (i <= text.length - 1) {
+//
+//            if (text[i] == '[') {
+//                try {
+//                    if (text[i + 1] == 'i' && text[i + 2] == 'm' && text[i + 4] == '*') {
+//
+//                        final.append(imgBitmaps.get(count).let { getImageSpannable(it) })
+//
+//                        count++
+//                        i += 5
+//                    }
+//                } catch (e: java.lang.Exception) {
+//                    Log.d("TAG", "parseContent: ${e.message}")
+//                }
+//            } else
+//                final.append(text[i])
+//            i++
+//        }
+//
+//        Log.d("TAG", "parseContent: $final")
+//        post_content_full.text = final
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -267,21 +290,21 @@ class FullBlogActivity : AppCompatActivity() {
     }
 
 
-    private fun getImageSpannable(Bm: Bitmap): Spannable? {
-
-
-        val originalBitmap = Bm
-        val bitmap = Bitmap.createScaledBitmap(
-            originalBitmap,
-            originalBitmap.width,
-            originalBitmap.height,
-            true
-        )
-        val dr: Drawable = BitmapDrawable(resources, bitmap)
-        dr.setBounds(0, 0, bitmap.width - 50, bitmap.height - 50)
-        val imageSpannable: Spannable = SpannableString("\uFFFC")
-        val imgSpan = ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM)
-        imageSpannable.setSpan(imgSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return imageSpannable
-    }
+//    private fun getImageSpannable(Bm: Bitmap): Spannable? {
+//
+//
+//        val originalBitmap = Bm
+//        val bitmap = Bitmap.createScaledBitmap(
+//            originalBitmap,
+//            originalBitmap.width,
+//            originalBitmap.height,
+//            true
+//        )
+//        val dr: Drawable = BitmapDrawable(resources, bitmap)
+//        dr.setBounds(0, 0, bitmap.width - 50, bitmap.height - 50)
+//        val imageSpannable: Spannable = SpannableString("\uFFFC")
+//        val imgSpan = ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM)
+//        imageSpannable.setSpan(imgSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        return imageSpannable
+//    }
 }

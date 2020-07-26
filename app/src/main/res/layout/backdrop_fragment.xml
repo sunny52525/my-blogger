@@ -118,19 +118,17 @@
             app:met_primaryColor="?colorAccent"
             app:met_singleLineEllipsis="true" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
+        <TextView
             android:id="@+id/post_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Post"
             android:maxHeight="200dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="40dp"
             android:screenReaderFocusable="true"
             android:scrollIndicators="right"
-            android:scrollbars="vertical"
-            app:met_baseColor="@android:color/white"
-            app:met_floatingLabel="highlight"
-            app:met_maxCharacters="1000"
-            app:met_primaryColor="?colorAccent" />
+            android:scrollbars="vertical" />
 
         <RelativeLayout
             android:layout_width="match_parent"

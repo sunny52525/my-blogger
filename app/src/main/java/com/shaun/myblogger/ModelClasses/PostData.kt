@@ -11,7 +11,7 @@ class PostData : Serializable {
     private var title = ""
     private var username = ""
     private var userId = ""
-    private var photosInpost: ArrayList<String>? = null
+    private var postCover = ""
 
     constructor()
     constructor(
@@ -33,7 +33,7 @@ class PostData : Serializable {
         this.title = title
         this.username = username
         this.userId = userId
-        this.photosInpost = photosInpost
+        this.postCover = postCover
     }
 
     fun getid() = id
@@ -44,7 +44,7 @@ class PostData : Serializable {
     fun gettitle() = title
     fun getusername() = username
     fun getuserId() = userId
-    fun getphotosInpost() = photosInpost
+    fun getpostCover() = postCover
 
     fun setid(id: String) {
         this.id = id
@@ -78,8 +78,8 @@ class PostData : Serializable {
         this.userId = userId
     }
 
-    fun setphotosInpost(photosInpost: ArrayList<String>) {
-        this.photosInpost = photosInpost
+    fun setpostCover(postCover: String) {
+        this.postCover = postCover
     }
 
     override fun toString(): String {
@@ -91,7 +91,7 @@ class PostData : Serializable {
             username =$username
             time = $time
             title =$title
-            postCover =$photosInpost
+            postCover =$postCover
         """.trimIndent()
     }
 }

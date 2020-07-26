@@ -76,10 +76,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
+                <io.square1.richtextlib.ui.RichContentView
                     android:id="@+id/post_content_full"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/White"
                     android:fontFamily="@font/source_serif_pro"
                     android:padding="10dp"
                     android:scrollbars="vertical"
