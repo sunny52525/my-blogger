@@ -140,6 +140,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         if (checkbox.isChecked) {
             postHashMap["nameOP"] = "Anonymous"
             postHashMap["username"] = "anonymous"
+
         } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
 
 
@@ -148,7 +149,10 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
 
         reference.setValue(postHashMap).addOnCompleteListener {
-            saveId(key)
+            if (!checkbox.isChecked) {
+                saveId(key)
+            }
+
         }
 
         if (postCover == null)
@@ -160,6 +164,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
         post_title.setText("")
         post_content.setText("")
+
 
     }
 
@@ -442,7 +447,6 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         Handler().postDelayed(
             {
                 hide()
-                checkbox.isChecked = false
             }, 300
         )
     }
@@ -457,6 +461,8 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         Log.d(TAG, "onOptionsItemSelected: ${item}")
         when (item.itemId) {
             R.id.new_post -> {
+
+                checkbox.isChecked = false
 
                 mBottomSheetBehavior!!.isHideable = true
 

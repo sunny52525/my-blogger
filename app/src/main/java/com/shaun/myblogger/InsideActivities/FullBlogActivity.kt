@@ -3,6 +3,7 @@ package com.shaun.myblogger.InsideActivities
 import GlideTarget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -27,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.hzn.lib.EasyTransition
 import com.shaun.myblogger.ModelClasses.PostData
+import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
 import com.squareup.picasso.Picasso
 import io.square1.richtextlib.ui.RichContentView
@@ -37,6 +40,7 @@ import kotlinx.android.synthetic.main.activity_full_blog.*
 class FullBlogActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
     var finishEnter = false
+    var userId = ""
     lateinit var postData: PostData
 
     lateinit var contentView: RichContentView
@@ -50,6 +54,8 @@ class FullBlogActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_blog)
+
+
 
         contentView =
             findViewById<RichContentView>(R.id.post_content_full)
@@ -76,6 +82,14 @@ class FullBlogActivity : AppCompatActivity() {
         val intent = intent
         val data: PostData = intent.getSerializableExtra("data") as PostData
         postData = data
+
+
+        userId = postData.getuserId()
+
+        share_blog.setOnClickListener {
+            sharePost(postData.getid(), postData.getnameOp())
+        }
+
         initViews(data.gettitle())
         var transitionDuration: Long = 800
         if (null != savedInstanceState) transitionDuration = 0
@@ -109,6 +123,25 @@ class FullBlogActivity : AppCompatActivity() {
         header.setOnClickListener {
 
         }
+    }
+
+    private fun sharePost(id: String, user: String) {
+
+        val strBuilder = StringBuilder()
+        strBuilder.appendln("Read this Blog Post by $user")
+        strBuilder.appendln("https://my-blogger-sunny.herokuapp.com/posts/$id")
+
+        val shareIntent =
+            Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, strBuilder.toString())
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Blog Share")
+        ContextCompat.startActivity(
+            this,
+            Intent.createChooser(shareIntent, "Share"),
+            Bundle.EMPTY
+        )
+
     }
 
     private fun initViews(heading: String) {
@@ -231,7 +264,14 @@ class FullBlogActivity : AppCompatActivity() {
 
             }
             R.id.full_blog_view_profile -> {
-                TODO("Implement Profile Function")
+
+                if (userId == "") {
+
+                    return true
+                }
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("user_id", userId)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -285,6 +325,10 @@ class FullBlogActivity : AppCompatActivity() {
                 0
             ) //fix the color to white
             item.title = spanString
+        }
+        val item = menu.findItem(R.id.full_blog_view_profile)
+        if (userId == "") {
+            item.isVisible = false
         }
         return true
     }

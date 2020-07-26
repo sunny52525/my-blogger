@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -61,6 +63,7 @@ class RichTextActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.save -> {
@@ -70,6 +73,7 @@ class RichTextActivity : AppCompatActivity() {
                 DATA.putString("content", editor!!.getHtml())
 
                 DATA.apply()
+                Log.d("TAG", "oof ${editor!!.removeFormat()}\n  ${editor!!.tooltipText}")
 
                 finish()
 
