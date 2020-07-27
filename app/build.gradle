@@ -90,4 +90,5 @@ dependencies {
     api "org.ccil.cowan.tagsoup:tagsoup:1.2"
     api 'io.square1:richtext:6.0.25'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
 }

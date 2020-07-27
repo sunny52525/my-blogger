@@ -2,12 +2,14 @@ package com.shaun.myblogger
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
@@ -41,11 +43,16 @@ class RichTextActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rich_text)
+        val cache = intent.getStringExtra("cached")
+
         val sharedPref =
             getSharedPreferences("MyData", Context.MODE_PRIVATE)
         sharedPref.edit().clear().apply()
         setSupportActionBar(toolbar2)
         editor = findViewById(R.id.editor)
+        if (cache.isNotEmpty()) {
+            editor!!.setHtml(cache)
+        }
         editorToolbar = findViewById(R.id.editorToolbar) as ExampleToolbar
         editorToolbar!!.editor = editor
         editor!!.setEditorFontSize(20)
@@ -53,6 +60,12 @@ class RichTextActivity : AppCompatActivity() {
         editor!!.focusEditorAndShowKeyboardDelayed()
         select_img_rich.setOnClickListener {
             pickImg()
+        }
+
+
+        ClipboardManager.OnPrimaryClipChangedListener {
+
+
         }
 
     }
@@ -67,15 +80,30 @@ class RichTextActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.save -> {
+
                 val sharedPref =
                     getSharedPreferences("MyData", Context.MODE_PRIVATE)
                 val DATA = sharedPref.edit()
                 DATA.putString("content", editor!!.getHtml())
 
                 DATA.apply()
-                Log.d("TAG", "oof ${editor!!.removeFormat()}\n  ${editor!!.tooltipText}")
+                Log.d("TAG", "oof ${editor!!.getHtml()}")
+                Handler().postDelayed(
+                    {
+                        onBackPressed()
+                    }, 500
+                )
 
-                finish()
+//                finish()
+//                val clipboard =
+//                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//                clipboard.setPrimaryClip(ClipData.newPlainText("text", "text"));
+//                Log.d("TAG", "onOptionsItemSelected: ${clipboard.text}")
+
+            }
+            android.R.id.paste -> {
+//                 var clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
 
             }
             else -> {
@@ -87,9 +115,27 @@ class RichTextActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (!editorToolbar!!.handlesBackButtonPress()) {
-            super.onBackPressed()
-        }
+
+        editor!!.insertHtml(".<br>")
+
+        Handler().postDelayed({
+
+            if (!editorToolbar!!.handlesBackButtonPress()) {
+                super.onBackPressed()
+                val sharedPref =
+                    getSharedPreferences("MyData", Context.MODE_PRIVATE)
+                val DATA = sharedPref.edit()
+                DATA.putString(
+                    "content",
+                    (editor!!.getHtml()).subSequence(0, (editor!!.getHtml()).length - 4).toString()
+                )
+
+                DATA.apply()
+                Log.d("TAG", "oof ${editor!!.getHtml()}")
+
+//                finish()
+            }
+        }, 500)
     }
 
 

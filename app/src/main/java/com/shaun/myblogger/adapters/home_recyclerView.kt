@@ -1,6 +1,8 @@
 package com.shaun.myblogger.adapters
 
 import android.graphics.Color
+import android.text.Html
+import android.text.Spanned
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +15,6 @@ import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.R
 import java.lang.Integer.parseInt
 import java.lang.Long.parseLong
-import kotlin.math.min
 
 class HomeRecyclerViewAdapter(view: View) : RecyclerView.ViewHolder(view) {
     var postTitle: TextView = view.findViewById(R.id.each_post_title)
@@ -62,11 +63,9 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
             val currentPost = posts[position]
 
             holder.postTitle.text = currentPost.gettitle()
-            holder.postContent.text = (currentPost.getcontent()
-                .substring(0, min(240, currentPost.getcontent().length)) + "....").replace(
-                "[img*]",
-                ""
-            )
+            val intoString = currentPost.getcontent() + "...."
+            val sp: Spanned? = Html.fromHtml(intoString)
+            holder.postContent.text = (sp)
             holder.likeCount.text = currentPost.getlike_count().toString()
             holder.postUsername.text = currentPost.getusername()
             holder.postTime.text = currentPost.gettime()

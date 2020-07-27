@@ -10,6 +10,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.text.Html
+import android.text.Spanned
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -51,6 +53,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
     private val RequestCode = 438
     var userRef: DatabaseReference? = null
     private var storageRef: StorageReference? = null
+    private var content = ""
     private var mMenuAdapter: MenuAdapter? = null
     private var mViewHolder: ViewHolder? = null
     val ref: FirebaseDatabase? = null
@@ -97,7 +100,9 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         }
 
         post_content.setOnClickListener {
+
             val intent = Intent(applicationContext, RichTextActivity::class.java)
+            intent.putExtra("cached", post_content.text.toString())
             startActivity(intent)
         }
         setNames()
@@ -134,7 +139,8 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         postHashMap["username"] = UserData!!.getusername()
         postHashMap["time"] = currentTime
         postHashMap["title"] = post_title.text.toString()
-        postHashMap["content"] = post_content.text.toString()
+        postHashMap["content"] = content
+        content = ""
         postHashMap["like_count"] = 0
         postHashMap["photosInpost"] = imageUrls
         if (checkbox.isChecked) {
@@ -486,8 +492,11 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val data = sharedpref.getString("content", "")
         Log.d(TAG, "onResumeFragments: ")
         if (data?.isNotEmpty()!!) {
+            content = data
             Log.d(TAG, "onResumeFragments: $data")
-            post_content.setText(data)
+            val sp: Spanned? = Html.fromHtml(data)
+
+            post_content.setText(sp)
 
 
         }

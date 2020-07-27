@@ -46,14 +46,14 @@
         app:layout_constraintStart_toEndOf="@+id/ode" />
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/froces"
         android:layout_margin="15dp"
+        android:layout_marginBottom="40dp"
         android:background="?colorPrimary"
-        android:maxHeight="400dp"
         android:orientation="vertical"
         android:paddingLeft="72dp"
         android:paddingTop="16dp"
@@ -65,100 +65,128 @@
         app:layout_constraintTop_toBottomOf="@+id/froces"
         app:layout_constraintVertical_bias="0.0">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="20dp">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="8dp"
-                android:gravity="right"
+            android:gravity="right"
 
-                android:text="Post Anonymously"
+            android:text="Post Anonymously"
+            app:layout_constraintEnd_toStartOf="@+id/checkbox"
+            app:layout_constraintHorizontal_bias="0.889"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/checkbox"
-                app:layout_constraintHorizontal_bias="0.97"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        </TextView>
 
-            </TextView>
+        <net.igenius.customcheckbox.CustomCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right"
 
-            <net.igenius.customcheckbox.CustomCheckBox
-                android:id="@+id/checkbox"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_gravity="right"
+            android:layout_marginEnd="10dp"
+            android:foregroundGravity="bottom"
+            app:color_checked="@color/colorPrimaryDark"
+            app:color_tick="@color/colorPrimary"
+            app:color_unchecked_stroke="@color/colorAccent"
+            app:layout_constraintBottom_toTopOf="@+id/post_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:small_tick="false">
 
-                android:foregroundGravity="bottom"
-                app:color_checked="@color/colorPrimaryDark"
-                app:color_tick="@color/colorPrimary"
-                app:color_unchecked_stroke="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:small_tick="false">
+        </net.igenius.customcheckbox.CustomCheckBox>
 
-            </net.igenius.customcheckbox.CustomCheckBox>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/post_content"
+            android:layout_width="293dp"
+            android:layout_height="200dp"
+
+            android:focusable="false"
+            android:hint="Post"
+
+            android:minHeight="100dp"
+            android:screenReaderFocusable="true"
+
+            android:scrollIndicators="right"
+            android:scrollbars="vertical"
+            android:textAlignment="textStart"
+
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/post_title"
+            app:met_baseColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+
+            app:met_minCharacters="60" />
+
+        <ImageView
+            android:id="@+id/select_img"
+            android:layout_width="47dp"
+            android:layout_height="50dp"
+
+            android:src="@drawable/select"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/post_it"
+            app:layout_constraintVertical_bias="0.0">
+
+        </ImageView>
+
+        <at.markushi.ui.CircleButton
+            android:id="@+id/post_it"
+            android:layout_width="81dp"
+            android:layout_height="57dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="212dp"
+            android:layout_toRightOf="@id/select_img"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/tick"
+            app:cb_color="@color/colorPrimaryDark"
+            app:cb_pressedRingWidth="8dip"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/post_content"
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/post_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
+            android:layout_marginTop="8dp"
             android:hint="Title"
-
             android:textSize="30sp"
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.931"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="20"
             app:met_primaryColor="?colorAccent"
             app:met_singleLineEllipsis="true" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/post_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Post"
-            android:maxHeight="200dp"
-            android:layout_marginBottom="10dp"
-            android:textSize="40dp"
-            android:screenReaderFocusable="true"
-            android:scrollIndicators="right"
-            android:scrollbars="vertical" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <ImageView
-                android:id="@+id/select_img"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-
-                android:src="@drawable/select">
-
-            </ImageView>
-
-            <at.markushi.ui.CircleButton
-                android:id="@+id/post_it"
-                android:layout_width="51dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="203dp"
-                android:layout_toRightOf="@id/select_img"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/tick"
-                app:cb_color="@color/colorPrimaryDark"
-                app:cb_pressedRingWidth="8dip" />
-        </RelativeLayout>
-
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
