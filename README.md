@@ -3,7 +3,7 @@ Blogging app which uses firebase as backend and Database and a website which use
 
 Add google-services.json and refactor the name of project to make it work
 
-# https://my-blogger-sunny.herokuapp.com/ (work in progress)
-# https://my-blogger-sunny.herokuapp.com/posts/-MDHoshBKUwJs_076YhM (a post example)
 
-# https://drive.google.com/drive/u/0/folders/1NG3cYtlsDmdBecuzJJbOU9EMBWerjCjj (Screenshots)
+Work in progress [Website](https://www.shorturl.at/tMRVX)
+Post Example [Post](https://www.shorturl.at/fBHK6)
+App [Screenshots](https://www.shorturl.at/epqER)
