@@ -1,4 +1,4 @@
-# my-blogger
+# My-blogger
 Blogging app which uses firebase as backend and Database and a website which uses heroku as backend 
 
 Add google-services.json and refactor the name of project to make it work
