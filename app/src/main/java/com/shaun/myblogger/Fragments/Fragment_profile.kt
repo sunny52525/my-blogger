@@ -105,7 +105,7 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
 
                 }
                 try {
-                    val reversedPost = postList!!.reversed()
+                    val reversedPost = postList.reversed()
                     Log.d(TAG, "onDataChange11111: $postList")
                     postAdapter.loadNewData(reversedPost)
                     val refresh_layout_profile =
@@ -114,7 +114,7 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
                     refresh_layout_profile?.setRefreshing(false)
 
                 } catch (e: Exception) {
-                    Log.d(TAG, "onDataChangeError: ${postList!!.size}")
+                    Log.d(TAG, "onDataChangeError: ${postList.size}")
                     Log.d(TAG, "onDataChangeError: ${e.message}")
 
                 }
@@ -147,7 +147,7 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
 
 
         val intent = Intent(this.context, FullBlogActivity::class.java)
-        intent.putExtra("data", data)
+        intent.putExtra("data", data.getid())
         EasyTransition.startActivity(intent, options)
     }
 

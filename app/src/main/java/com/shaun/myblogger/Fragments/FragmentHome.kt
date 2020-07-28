@@ -113,7 +113,7 @@ class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
 
 
         val intent = Intent(this.context, FullBlogActivity::class.java)
-        intent.putExtra("data", data)
+        intent.putExtra("data", data.getid())
         EasyTransition.startActivity(intent, options)
     }
 

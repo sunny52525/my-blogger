@@ -102,13 +102,13 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
 
                 }
                 try {
-                    val reversedPost = postList!!.reversed()
+                    val reversedPost = postList.reversed()
                     postAdapter.loadNewData(reversedPost)
 
                     refresh_layout.setRefreshing(false)
 
                 } catch (e: Exception) {
-                    Log.d("TAG", "onDataChangeError: ${postList!!.size}")
+                    Log.d("TAG", "onDataChangeError: ${postList.size}")
                     Log.d("TAG", "onDataChangeError: ${e.message}")
 
                 }
@@ -129,7 +129,7 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
 
 
         val intent = Intent(this, FullBlogActivity::class.java)
-        intent.putExtra("data", data)
+        intent.putExtra("data", data.getid())
         EasyTransition.startActivity(intent, options)
     }
 

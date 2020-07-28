@@ -5,6 +5,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.SpannableString
@@ -15,7 +16,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -23,11 +23,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.hzn.lib.EasyTransition
+import com.shaun.myblogger.HomeScreenActivity
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
@@ -41,21 +44,17 @@ class FullBlogActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
     var finishEnter = false
     var userId = ""
+    private var savedInst: Bundle? = null
     lateinit var postData: PostData
-
     lateinit var contentView: RichContentView
     private var layoutAbout: androidx.core.widget.NestedScrollView? = null
-    lateinit var collapsingToolbar: CollapsingToolbarLayout
-//    lateinit var imgBitmaps:ArrayList<Bitmap>
 
-    private var appBarLayout: AppBarLayout? = null
-    private var recList: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_blog)
-
-
+        savedInst = savedInstanceState
+        handleIntent(intent)
 
         contentView =
             findViewById<RichContentView>(R.id.post_content_full)
@@ -70,6 +69,8 @@ class FullBlogActivity : AppCompatActivity() {
             ).show()
             true
         }
+
+
         contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
             Glide.with(this)
                 .load(image)
@@ -79,21 +80,32 @@ class FullBlogActivity : AppCompatActivity() {
         }
 
 
-        val intent = intent
-        val data: PostData = intent.getSerializableExtra("data") as PostData
-        postData = data
 
 
-        userId = postData.getuserId()
+
+
+
 
         share_blog.setOnClickListener {
             sharePost(postData.getid(), postData.getnameOp())
         }
 
-        initViews(data.gettitle())
+
+
+
+        header.setOnClickListener {
+
+        }
+    }
+
+    private fun handlePost(savedInstanceState: Bundle?) {
+
+
+        //TODO Add loading icon
+        initViews(postData.gettitle())
         var transitionDuration: Long = 800
         if (null != savedInstanceState) transitionDuration = 0
-
+        Log.d("TAG", "handlePost: ${postData.getcontent()}")
         // transition enter
         finishEnter = false
         EasyTransition.enter(
@@ -107,22 +119,15 @@ class FullBlogActivity : AppCompatActivity() {
                     finishEnter = true
 
 
-                    initOtherViews(data.getcontent(), data.getpostCover())
                 }
             })
-
-        Log.d("FullBlog", "onCreate: $data")
+        initOtherViews(postData.getcontent(), postData.getpostCover())
+        Log.d("FullBlog", "onCreate: $postData")
         toolbar = findViewById(R.id.anim_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val llm = LinearLayoutManager(this)
         llm.orientation = LinearLayoutManager.VERTICAL
-
-
-
-        header.setOnClickListener {
-
-        }
     }
 
     private fun sharePost(id: String, user: String) {
@@ -155,7 +160,7 @@ class FullBlogActivity : AppCompatActivity() {
         if (imgLinks.isNotEmpty()) {
             Picasso.get().load(imgLinks).into(header)
         }
-
+        Log.e("TAG", "initOtherViews: $text")
 
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
@@ -282,6 +287,7 @@ class FullBlogActivity : AppCompatActivity() {
         if (finishEnter) {
             finishEnter = false
             startBackAnim()
+
         }
     }
 
@@ -312,12 +318,17 @@ class FullBlogActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        val appLinkAction = intent.action
+        if (Intent.ACTION_VIEW == appLinkAction)
+            return false
+
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_full_blog, menu)
         for (i in 0 until menu!!.size()) {
-            val item = menu!!.getItem(i)
+            val item = menu.getItem(i)
             val spanString =
-                SpannableString(menu!!.getItem(i).title.toString())
+                SpannableString(menu.getItem(i).title.toString())
             spanString.setSpan(
                 ForegroundColorSpan(Color.WHITE),
                 0,
@@ -333,22 +344,72 @@ class FullBlogActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
 
-//    private fun getImageSpannable(Bm: Bitmap): Spannable? {
-//
-//
-//        val originalBitmap = Bm
-//        val bitmap = Bitmap.createScaledBitmap(
-//            originalBitmap,
-//            originalBitmap.width,
-//            originalBitmap.height,
-//            true
-//        )
-//        val dr: Drawable = BitmapDrawable(resources, bitmap)
-//        dr.setBounds(0, 0, bitmap.width - 50, bitmap.height - 50)
-//        val imageSpannable: Spannable = SpannableString("\uFFFC")
-//        val imgSpan = ImageSpan(dr, DynamicDrawableSpan.ALIGN_BOTTOM)
-//        imageSpannable.setSpan(imgSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-//        return imageSpannable
-//    }
+    private fun handleIntent(intent: Intent) {
+        val appLinkAction = intent.action
+        val appLinkData: Uri? = intent.data
+        if (Intent.ACTION_VIEW == appLinkAction) {
+            appLinkData?.lastPathSegment?.also { recipeId ->
+                Uri.parse("content://com.recipe_app/recipe/")
+                    .buildUpon()
+                    .appendPath(recipeId)
+                    .build().also { appData ->
+                        Log.d("TAG", "handleIntent: ${appData.lastPathSegment}")
+                        val postid = appData.lastPathSegment.toString()
+
+                        processView(postid, true)
+
+                    }
+            }
+        } else {
+            val intent = intent
+            val postid = intent.getStringExtra("data")
+            processView(postid, false)
+
+
+        }
+    }
+
+    private fun processView(id: String, check: Boolean) {
+
+        val ref = FirebaseDatabase.getInstance().reference.child("posts").child(id)
+        val eventListener: ValueEventListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("TAG", "onDataChange: $dataSnapshot")
+                if (!dataSnapshot.exists()) {
+                    val intent = Intent(this@FullBlogActivity, HomeScreenActivity::class.java)
+                    startActivity(intent)
+                    Toast.makeText(this@FullBlogActivity, "Post Not Found", Toast.LENGTH_LONG)
+                        .show()
+
+                } else {
+                    if (check)
+                        makeActionDisappear()
+                    postData = dataSnapshot.getValue(PostData::class.java)!!
+                    userId = postData.getuserId()
+                    handlePost(savedInst)
+
+
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d(
+                    "TAG",
+                    databaseError.message
+                ) //Don't ignore errors!
+            }
+        }
+        ref.addListenerForSingleValueEvent(eventListener)
+    }
+
+    private fun makeActionDisappear() {
+
+    }
+
+
 }
