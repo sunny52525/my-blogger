@@ -30,7 +30,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hzn.lib.EasyTransition
-import com.shaun.myblogger.HomeScreenActivity
+import com.shaun.myblogger.LoginActivity
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
@@ -98,7 +98,7 @@ class FullBlogActivity : AppCompatActivity() {
         }
     }
 
-    private fun handlePost(savedInstanceState: Bundle?) {
+    private fun handlePost(savedInstanceState: Bundle?, check: Boolean) {
 
 
         //TODO Add loading icon
@@ -125,7 +125,8 @@ class FullBlogActivity : AppCompatActivity() {
         Log.d("FullBlog", "onCreate: $postData")
         toolbar = findViewById(R.id.anim_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        if (!check)
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val llm = LinearLayoutManager(this)
         llm.orientation = LinearLayoutManager.VERTICAL
     }
@@ -284,6 +285,11 @@ class FullBlogActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
+
+        val appLinkAction = intent.action
+        if (Intent.ACTION_VIEW == appLinkAction)
+            finish()
+
         if (finishEnter) {
             finishEnter = false
             startBackAnim()
@@ -300,6 +306,7 @@ class FullBlogActivity : AppCompatActivity() {
         test.animate()
             .setDuration(200)
             .scaleX(0f)
+
             .scaleY(0f)
         layoutAbout!!.animate()
             .setDuration(200)
@@ -320,8 +327,10 @@ class FullBlogActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         val appLinkAction = intent.action
-        if (Intent.ACTION_VIEW == appLinkAction)
+        if (Intent.ACTION_VIEW == appLinkAction) {
+
             return false
+        }
 
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_full_blog, menu)
@@ -337,10 +346,14 @@ class FullBlogActivity : AppCompatActivity() {
             ) //fix the color to white
             item.title = spanString
         }
+
+
         val item = menu.findItem(R.id.full_blog_view_profile)
         if (userId == "") {
             item.isVisible = false
         }
+
+
         return true
     }
 
@@ -381,7 +394,7 @@ class FullBlogActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("TAG", "onDataChange: $dataSnapshot")
                 if (!dataSnapshot.exists()) {
-                    val intent = Intent(this@FullBlogActivity, HomeScreenActivity::class.java)
+                    val intent = Intent(this@FullBlogActivity, LoginActivity::class.java)
                     startActivity(intent)
                     Toast.makeText(this@FullBlogActivity, "Post Not Found", Toast.LENGTH_LONG)
                         .show()
@@ -391,7 +404,7 @@ class FullBlogActivity : AppCompatActivity() {
                         makeActionDisappear()
                     postData = dataSnapshot.getValue(PostData::class.java)!!
                     userId = postData.getuserId()
-                    handlePost(savedInst)
+                    handlePost(savedInst, check)
 
 
                 }
