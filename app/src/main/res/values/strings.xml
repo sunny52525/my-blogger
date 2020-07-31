@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">My Blogger</string>
     <string name="client_id">580169673576-i84uhschvbpalvb557n0pq27in6u4eqa.apps.googleusercontent.com</string>
-
+    <string name="defaultProfile"><![CDATA[https://firebasestorage.googleapis.com/v0/b/my-blogger-1b264.appspot.com/o/avatar.png?alt=media&token=d875c7d3-fccc-41b8-87ba-7f5e80c8b873]]></string>
     <array name="menuOptions">
         <item>Home</item>
         <item>Profile</item>
@@ -10,4 +10,5 @@
     </array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="remember_changing_details_here_won_t_reflect_in_your_old_posts">Remember, Changing details here won\'t reflect in your old Posts</string>
 </resources>

@@ -167,7 +167,7 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 //        post_content_full.text = text.replace("[img*]", "")
 
-        var str = RichTextV2.fromHtml(applicationContext, text)
+        val str = RichTextV2.fromHtml(applicationContext, text)
 
 //        val v= RichTextDocumentElement.TextBuilder(editor!!.getHtml()).build()
         contentView.setText(str)

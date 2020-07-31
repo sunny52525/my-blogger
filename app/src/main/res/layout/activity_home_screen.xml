@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:layout_height="match_parent">
-
 
 
     <nl.psdcompany.duonavigationdrawer.views.DuoMenuView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
+        android:background="@color/colorPrimaryDark"
         android:tag="@string/tag_menu"
         app:footer="@layout/duo_view_footer"
         app:header="@layout/duo_view_header" />
@@ -21,6 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
+        android:background="@color/colorPrimaryDark"
         android:tag="@string/tag_content">
 
         <androidx.appcompat.widget.Toolbar
@@ -34,26 +38,11 @@
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:padding="?attr/listPreferredItemPaddingRight">
+            android:background="@color/colorPrimaryDark">
 
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_add_post"
-                android:layout_width="90dp"
-                android:layout_height="74dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="300dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/colorPrimaryDark"
-                android:foregroundGravity="right"
-                android:src="@android:drawable/btn_plus"
-                app:cornerRadius="4dp">
-
-            </com.google.android.material.floatingactionbutton.FloatingActionButton>
         </FrameLayout>
 
     </LinearLayout>

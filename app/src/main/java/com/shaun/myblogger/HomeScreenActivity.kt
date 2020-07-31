@@ -2,44 +2,66 @@ package com.shaun.myblogger
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
+import android.text.Html
+import android.text.Spanned
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import com.shaun.myblogger.Fragments.FragmentAbout
 import com.shaun.myblogger.Fragments.FragmentHome
 import com.shaun.myblogger.Fragments.FragmentSetting
 import com.shaun.myblogger.Fragments.Fragment_profile
 import com.shaun.myblogger.ModelClasses.UserInfo
-import kotlinx.android.synthetic.main.activity_home_screen.*
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.backdrop_fragment.*
 import kotlinx.android.synthetic.main.duo_view_header.*
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 private const val TAG = "HOMESCRENN"
 
 class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener {
+    private val RequestCode = 438
+    var userRef: DatabaseReference? = null
+    private var storageRef: StorageReference? = null
+    private var content = ""
     private var mMenuAdapter: MenuAdapter? = null
     private var mViewHolder: ViewHolder? = null
     val ref: FirebaseDatabase? = null
     var UserData: UserInfo? = null
+
+    var postCover: Uri? = null
     private var mTitles = ArrayList<String>()
+    private var imageUrls = ArrayList<String>()
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,14 +74,37 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         )
         post_it.setOnClickListener {
 
-            hideKeyboard(this)
-            SavePostToSerer()
+
+            if (post_title.text!!.isNotEmpty() && post_content.text!!.isNotEmpty()) {
+                hideKeyboard(this)
+                SavePostToSerer()
+
+            } else {
+                if (post_title.text!!.isEmpty())
+                    Toast.makeText(this, "Title Can't Be empty", Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(this, "Body Can't Be empty", Toast.LENGTH_SHORT).show()
+
+            }
         }
         hide_bsb.setOnClickListener {
 
             hideKeyboard(this)
+            post_title.setText("")
+            postCover = null
+            post_content.setText("")
+        }
+        select_img.setOnClickListener {
+            Toast.makeText(this, "Select Cover Image", Toast.LENGTH_SHORT).show()
+            pickImg()
         }
 
+        post_content.setOnClickListener {
+
+            val intent = Intent(applicationContext, RichTextActivity::class.java)
+            intent.putExtra("cached", post_content.text.toString())
+            startActivity(intent)
+        }
         setNames()
         configureBackdrop()
         // Initialize the views
@@ -78,12 +123,13 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         // Show main fragment in container
         goToFragment(FragmentHome(), false)
         mMenuAdapter!!.setViewSelected(0, true)
-        setTitle(mTitles.get(0))
+        title = mTitles.get(0)
     }
+
 
     private fun SavePostToSerer() {
 
-        val sdf = SimpleDateFormat("dd/mm hh:mm")
+        val sdf = SimpleDateFormat("dd/MM hh:mm")
         val currentTime = sdf.format(Date())
 
         val postHashMap = HashMap<String, Any>()
@@ -93,13 +139,129 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         postHashMap["username"] = UserData!!.getusername()
         postHashMap["time"] = currentTime
         postHashMap["title"] = post_title.text.toString()
-        postHashMap["content"] = post_content.text.toString()
+        postHashMap["content"] = content
+        content = ""
         postHashMap["like_count"] = 0
+        postHashMap["photosInpost"] = imageUrls
+        if (checkbox.isChecked) {
+            postHashMap["nameOP"] = "Anonymous"
+            postHashMap["username"] = "anonymous"
+
+        } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
+
 
         val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
-            .setValue(postHashMap)
 
 
+
+        reference.setValue(postHashMap).addOnCompleteListener {
+            if (!checkbox.isChecked) {
+                saveId(key)
+            }
+
+        }
+
+        if (postCover == null)
+            reference.setValue(postHashMap)
+        else {
+            uploadImg(postHashMap, reference)
+        }
+
+
+        post_title.setText("")
+        post_content.setText("")
+
+
+    }
+
+    private fun saveId(key: String) {
+        val reference = FirebaseDatabase.getInstance().reference.child("Users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userData: UserInfo? = snapshot.getValue(UserInfo::class.java)
+                val postArray = userData!!.getpostIDs()
+                Log.d(TAG, "onDataChange: $postArray")
+                if (postArray == null) {
+                    val array = ArrayList<String>(1)
+                    array.add(key)
+                    val ref = FirebaseDatabase.getInstance().reference.child("Users")
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
+                        .setValue(array)
+
+                } else {
+
+
+                    postArray.add(0, key)
+                }
+
+
+                val ref = FirebaseDatabase.getInstance().reference.child("Users")
+                    .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
+                    .setValue(postArray)
+                Log.d(TAG, "onDataChange: $postArray")
+
+
+            }
+
+        })
+    }
+
+    private fun uploadImg(postMap: HashMap<String, Any>, reference: DatabaseReference) {
+        storageRef = FirebaseStorage.getInstance().reference.child("Post Images")
+        val progressBar = ProgressDialog(this)
+        progressBar.setMessage("Please wait,Posting..")
+        progressBar.show()
+
+        val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+        val uploadTask: StorageTask<*>
+
+        val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, postCover)
+        val baos = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+        val data: ByteArray? = baos.toByteArray()
+
+        uploadTask = fileRef.putBytes(data!!)
+        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+            if (!it.isSuccessful) {
+                it.exception?.let {
+                    throw  it
+                }
+            }
+            return@Continuation fileRef.downloadUrl
+        }).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val downloadUrl = it.result
+                val url = downloadUrl.toString()
+
+                val map = postMap
+                map["postCover"] = url
+                reference.setValue(map)
+                postCover = null
+                progressBar.dismiss()
+            }
+        }
+
+
+    }
+
+    private fun pickImg() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, RequestCode)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
+            postCover = data.data
+            Log.d(TAG, "onActivityResult: ${postCover}")
+        }
     }
 
     private fun setNames() {
@@ -112,11 +274,18 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val UserData =
-                    snapshot.getValue(com.shaun.myblogger.ModelClasses.UserInfo::class.java)
+                    snapshot.getValue(UserInfo::class.java)
                 this@HomeScreenActivity.UserData = UserData
                 duo_view_header_text_sub_title.text = UserData!!.getusername()
-                duo_view_header_text_title.text = UserData!!.getname()
+                duo_view_header_text_title.text = UserData.getname()
                 Log.d(TAG, "onDataChange1: $UserData")
+                val url = UserData.getPphoto()
+                if (url.isNotEmpty()) {
+                    Picasso.get().load(url)
+                        .placeholder(resources.getDrawable(R.drawable.user))
+                        .into(profile_photo)
+                }
+
             }
 
         })
@@ -161,14 +330,21 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
     private fun goToFragment(
         fragment: Fragment,
-        addToBackStack: Boolean
+
+        addToBack: Boolean
     ) {
+        setNames()
+
         val transaction =
             supportFragmentManager.beginTransaction()
-        if (addToBackStack) {
+
+
+        if (addToBack) {
             transaction.addToBackStack(null)
         }
-        transaction.add(R.id.container, fragment).commit()
+        transaction.add(R.id.container, fragment)
+            .commit()
+
     }
 
     override fun onOptionClicked(position: Int, objectClicked: Any) {
@@ -179,20 +355,20 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         mMenuAdapter?.setViewSelected(position, true)
         when (position) {
             0 -> {
-                fab_add_post.visibility = View.VISIBLE
-                goToFragment(FragmentHome(), true)
+
+
+                goToFragment(FragmentHome(), false)
+
             }
             1 -> {
-                fab_add_post.visibility = View.GONE
-                goToFragment(Fragment_profile(), true)
+                goToFragment(Fragment_profile(), false)
             }
             2 -> {
-                fab_add_post.visibility = View.GONE
-                goToFragment(FragmentSetting(), true)
+                goToFragment(FragmentSetting(), false)
             }
             3 -> {
-                fab_add_post.visibility = View.GONE
-                goToFragment(FragmentAbout(), true)
+
+                goToFragment(FragmentAbout(), false)
             }
             else -> goToFragment(MainFragment(), false)
         }
@@ -223,12 +399,11 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val fragment = supportFragmentManager.findFragmentById(R.id.filter_fragment)
         fragment?.let {
             // Get the BottomSheetBehavior from the fragment view
-            BottomSheetBehavior.from(fragment.requireView())?.let { bsb ->
+            BottomSheetBehavior.from(fragment.requireView()).let { bsb ->
                 // Set the initial state of the BottomSheetBehavior to HIDDEN
                 bsb.state = BottomSheetBehavior.STATE_HIDDEN
 
                 // Set the trigger that will expand your view
-                fab_add_post.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
 
                 // Set the reference into class attribute (will be used latter)
                 mBottomSheetBehavior = bsb
@@ -253,10 +428,13 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         // With the reference of the BottomSheetBehavior stored
         if (mBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
             hide()
+            post_content.setText("")
+            post_title.setText("")
 
         } else {
             super.onBackPressed()
         }
+
 
     }
 
@@ -264,19 +442,66 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         val imm: InputMethodManager =
             activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         //Find the currently focused view, so we can grab the correct window token from it.
-        var view: View? = activity.getCurrentFocus()
+        var view: View? = activity.currentFocus
         //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
             view = View(activity)
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
 
-        post_title.setText("")
-        post_content.setText("")
+
         Handler().postDelayed(
             {
                 hide()
             }, 300
         )
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.home_screen_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected: ${item}")
+        when (item.itemId) {
+            R.id.new_post -> {
+
+                checkbox.isChecked = false
+
+                mBottomSheetBehavior!!.isHideable = true
+
+                mBottomSheetBehavior?.let {
+                    it.state = BottomSheetBehavior.STATE_EXPANDED
+
+                }
+            }
+            else -> {
+                Toast.makeText(this, "Not Possible", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val sharedpref = getSharedPreferences("MyData", Context.MODE_PRIVATE)
+        val data = sharedpref.getString("content", "")
+        Log.d(TAG, "onResumeFragments: ")
+        if (data?.isNotEmpty()!!) {
+            content = data
+            Log.d(TAG, "onResumeFragments: $data")
+            val sp: Spanned? = Html.fromHtml(data)
+
+            post_content.setText(sp)
+
+
+        }
+
+        sharedpref.edit().clear().clear().apply()
+
     }
 }

@@ -73,7 +73,7 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
 
     private fun loadData(postIds: ArrayList<String>?) {
 
-        var postList: ArrayList<PostData>
+        val postList: ArrayList<PostData>
         postList = ArrayList()
 
         var allPost: List<PostData>

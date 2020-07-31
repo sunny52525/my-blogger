@@ -23,7 +23,7 @@ class PostData : Serializable {
         title: String,
         username: String,
         userId: String,
-        photosInpost: ArrayList<String>
+        postCover: String
     ) {
         this.id = id
         this.content = content

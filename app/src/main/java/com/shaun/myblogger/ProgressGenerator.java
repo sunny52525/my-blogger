@@ -1,9 +1,9 @@
 package com.shaun.myblogger;
 
 
-import com.dd.processbutton.ProcessButton;
-
 import android.os.Handler;
+
+import com.dd.processbutton.ProcessButton;
 
 import java.util.Random;
 
@@ -11,7 +11,7 @@ public class ProgressGenerator {
 
     public interface OnCompleteListener {
 
-        public void onComplete();
+        void onComplete();
     }
 
     private OnCompleteListener mListener;

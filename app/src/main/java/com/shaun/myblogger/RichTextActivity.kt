@@ -53,7 +53,7 @@ class RichTextActivity : AppCompatActivity() {
         if (cache.isNotEmpty()) {
             editor!!.setHtml(cache)
         }
-        editorToolbar = findViewById(R.id.editorToolbar) as ExampleToolbar
+        editorToolbar = findViewById(R.id.editorToolbar)
         editorToolbar!!.editor = editor
         editor!!.setEditorFontSize(20)
         editor!!.setPadding((4 * resources.displayMetrics.density).toInt())
@@ -162,12 +162,12 @@ class RichTextActivity : AppCompatActivity() {
         progressBar.show()
 
         val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-        var uploadTask: StorageTask<*>
+        val uploadTask: StorageTask<*>
         val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imgUri)
         val baos = ByteArrayOutputStream()
-        var b = Bitmap.createScaledBitmap(bmp, 300, 300, false)
+        val b = Bitmap.createScaledBitmap(bmp, 300, 300, false)
         b.compress(Bitmap.CompressFormat.JPEG, 25, baos)
-        var data: ByteArray? = baos.toByteArray()
+        val data: ByteArray? = baos.toByteArray()
 
         uploadTask = fileRef.putBytes(data!!)
         uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {

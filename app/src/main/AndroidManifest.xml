@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.shaun.myblogger">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -9,10 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeScreenActivity"></activity>
-        <activity android:name=".UserInfoActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".RichTextActivity"></activity>
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ViewFullImage" />
+        <activity
+            android:name=".FirebaseHandler"
+            android:allowBackup="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,6 +27,26 @@
             </intent-filter>
 
         </activity>
+        <activity
+            android:name=".InsideActivities.FullBlogActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <tools:validation testUrl="https://my-blogger-sunny.herokuapp.com/posts/-MD8rBE6dubSWxfzMB" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="my-blogger-sunny.herokuapp.com"
+                    android:pathPrefix="/posts/"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".HomeScreenActivity" />
+        <activity android:name=".UserInfoActivity" />
+        <activity android:name=".LoginActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
