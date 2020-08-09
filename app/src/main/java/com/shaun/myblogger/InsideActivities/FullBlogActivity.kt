@@ -39,7 +39,6 @@ import com.squareup.picasso.Picasso
 import io.square1.richtextlib.spans.ClickableSpan
 import io.square1.richtextlib.ui.RichContentView
 import io.square1.richtextlib.ui.RichContentViewDisplay
-import io.square1.richtextlib.v2.RichTextV2
 import kotlinx.android.synthetic.main.activity_full_blog.*
 
 
@@ -69,7 +68,7 @@ class FullBlogActivity : AppCompatActivity() {
                 var action: String? = span.getAction()
                 action = if (TextUtils.isEmpty(action)) " no action" else action
 //                Toast.makeText(this@FullBlogActivity, action, Toast.LENGTH_LONG).show()
-                if( URLUtil.isValidUrl(action)){
+                if (URLUtil.isValidUrl(action)) {
                     val browserIntent =
                         Intent(Intent.ACTION_VIEW, Uri.parse(action))
                     startActivity(browserIntent)
@@ -160,22 +159,20 @@ class FullBlogActivity : AppCompatActivity() {
 
 
         val tvName = findViewById<CollapsingToolbarLayout>(R.id.each_post_title)
-        tvName!!.title = heading
+        tvName!!.title = heading.trimIndent()
     }
 
     private fun initOtherViews(text: String, imgLinks: String) {
         if (imgLinks.isNotEmpty()) {
             Picasso.get().load(imgLinks).into(header)
         }
-        Log.e("TAG", "initOtherViews: $text")
+
 
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
 
 
-        val str = RichTextV2.fromHtml(applicationContext, text)
-        val s=RichTextV2.textFromHtml(this,text)
-        contentView.setText(s)
+        contentView.setText(text)
 
         Handler().postDelayed({
 
@@ -187,8 +184,6 @@ class FullBlogActivity : AppCompatActivity() {
             .setDuration(300)
             .alpha(1f)
             .translationY(0f)
-
-
 
 
     }
