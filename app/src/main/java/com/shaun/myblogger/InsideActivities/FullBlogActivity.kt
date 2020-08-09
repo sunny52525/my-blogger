@@ -171,7 +171,6 @@ class FullBlogActivity : AppCompatActivity() {
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
 
-
         contentView.setText(text)
 
         Handler().postDelayed({

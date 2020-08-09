@@ -50,7 +50,9 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
                     .error(resources.getDrawable(R.drawable.user))
                     .into(profile_photo_profile_activity)
 
-                loadData(currentUserData?.getpostIDs())
+
+
+                loadData()
                 val recycerView = findViewById<RecyclerView>(R.id.recycler_view_profile_activity)
                 recycerView.layoutManager = LinearLayoutManager(this@ProfileActivity)
                 recycerView.adapter = postAdapter
@@ -72,13 +74,13 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
         return pphoto
     }
 
-    private fun loadData(postIds: ArrayList<String>?) {
+    private fun loadData() {
 
         val postList: ArrayList<PostData>
         postList = ArrayList()
 
         var allPost: List<PostData>
-        val ref = FirebaseDatabase.getInstance().reference.child("posts")
+        val ref = FirebaseDatabase.getInstance().reference.child("user-posts").child(currentUserData!!.getid())
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
@@ -92,7 +94,8 @@ class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
                         Log.d(ContentValues.TAG, "onDataChangeHOME: $singlePost")
                         Log.d(ContentValues.TAG, "onDataChangeHOME: ********************")
 
-                        if (postIds!!.contains(singlePost!!.getid())) {
+
+                        if (singlePost != null) {
                             postList.add(singlePost)
                         }
 

@@ -156,7 +156,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
         reference.setValue(postHashMap).addOnCompleteListener {
             if (!checkbox.isChecked) {
-                saveId(key)
+                saveId(key,postHashMap)
             }
 
         }
@@ -174,41 +174,12 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
     }
 
-    private fun saveId(key: String) {
-        val reference = FirebaseDatabase.getInstance().reference.child("Users")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val userData: UserInfo? = snapshot.getValue(UserInfo::class.java)
-                val postArray = userData!!.getpostIDs()
-                Log.d(TAG, "onDataChange: $postArray")
-                if (postArray == null) {
-                    val array = ArrayList<String>(1)
-                    array.add(key)
-                    val ref = FirebaseDatabase.getInstance().reference.child("Users")
-                        .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
-                        .setValue(array)
-
-                } else {
+    private fun saveId(key: String,postMap: HashMap<String, Any>) {
+        val reference = FirebaseDatabase.getInstance().reference.child("user-posts").child(FirebaseAuth.getInstance().currentUser!!.uid).child(key).setValue(postMap)
 
 
-                    postArray.add(0, key)
-                }
 
 
-                val ref = FirebaseDatabase.getInstance().reference.child("Users")
-                    .child(FirebaseAuth.getInstance().currentUser!!.uid).child("postIDs")
-                    .setValue(postArray)
-                Log.d(TAG, "onDataChange: $postArray")
-
-
-            }
-
-        })
     }
 
     private fun uploadImg(postMap: HashMap<String, Any>, reference: DatabaseReference) {
