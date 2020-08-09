@@ -1,5 +1,6 @@
 package com.shaun.myblogger.InsideActivities
 
+import GlideTarget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Intent
@@ -14,14 +15,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -29,12 +29,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hzn.lib.EasyTransition
-import com.shaun.myblogger.HtmlImageGetter
 import com.shaun.myblogger.LoginActivity
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
 import com.squareup.picasso.Picasso
+import io.square1.richtextlib.ui.RichContentView
+import io.square1.richtextlib.v2.RichTextV2
 import kotlinx.android.synthetic.main.activity_full_blog.*
 
 
@@ -44,7 +45,7 @@ class FullBlogActivity : AppCompatActivity() {
     var userId = ""
     private var savedInst: Bundle? = null
     lateinit var postData: PostData
-    lateinit var contentView: TextView
+    lateinit var contentView: RichContentView
     private var layoutAbout: androidx.core.widget.NestedScrollView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +56,27 @@ class FullBlogActivity : AppCompatActivity() {
         handleIntent(intent)
 
         contentView =
-            findViewById(R.id.post_content_full)
+            findViewById<RichContentView>(R.id.post_content_full)
+
+//        contentView.setOnSpanClickedObserver { span ->
+//            var action = span.action
+//            action = if (TextUtils.isEmpty(action)) " no action" else action
+//            Toast.makeText(
+//                this,
+//                action,
+//                Toast.LENGTH_LONG
+//            ).show()
+//            true
+//        }
+
+
+        contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
+            Glide.with(this)
+                .load(image)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(GlideTarget(this, urlBitmapSpan))
+        }
 
 
 
@@ -145,13 +166,13 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 //        post_content_full.text = text.replace("[img*]", "")
 
+        val str = RichTextV2.fromHtml(applicationContext, text)
 
 //        val v= RichTextDocumentElement.TextBuilder(editor!!.getHtml()).build()
-//        contentView.setText(text)
-        val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
-        val styledText = HtmlCompat.fromHtml(text, taskId, imageGetter, null)
-        contentView.text = styledText
+        contentView.setText(str)
+
         Handler().postDelayed({
+
             layoutAbout!!.visibility = View.VISIBLE
         }, 500)
         layoutAbout!!.alpha = 0f

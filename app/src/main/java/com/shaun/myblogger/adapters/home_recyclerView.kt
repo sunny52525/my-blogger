@@ -70,15 +70,16 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
         } else {
             val currentPost = posts[position]
 
-            holder.postTitle.text = currentPost.gettitle()
-            val intoString = currentPost.getcontent() + "...."
+            holder.postTitle.text = currentPost.gettitle().trimIndent()
+            val intoString = currentPost.getcontent().trimIndent()
 //            val sp: Spanned? = Html.fromHtml(intoString)
 
             val imageGetter = HtmlImageGetter(lifecycleOwner, Resources.getSystem(), holder.postContent)
             val styledText = HtmlCompat.fromHtml(intoString, position, imageGetter, null)
 //            contentView.text = styledText
 
-            holder.postContent.text = styledText
+            holder.postContent.text = styledText.subSequence(0,70).trimStart()
+            holder.postContent.append("......")
             holder.likeCount.text = currentPost.getlike_count().toString()
             holder.postUsername.text = currentPost.getusername()
             holder.postTime.text = currentPost.gettime()
