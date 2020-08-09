@@ -9,12 +9,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,7 +36,9 @@ import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.ProfileActivity
 import com.shaun.myblogger.R
 import com.squareup.picasso.Picasso
+import io.square1.richtextlib.spans.ClickableSpan
 import io.square1.richtextlib.ui.RichContentView
+import io.square1.richtextlib.ui.RichContentViewDisplay
 import io.square1.richtextlib.v2.RichTextV2
 import kotlinx.android.synthetic.main.activity_full_blog.*
 
@@ -45,7 +49,7 @@ class FullBlogActivity : AppCompatActivity() {
     var userId = ""
     private var savedInst: Bundle? = null
     lateinit var postData: PostData
-    lateinit var contentView: RichContentView
+    lateinit var contentView: io.square1.richtextlib.ui.RichContentView
     private var layoutAbout: androidx.core.widget.NestedScrollView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,18 +62,21 @@ class FullBlogActivity : AppCompatActivity() {
         contentView =
             findViewById<RichContentView>(R.id.post_content_full)
 
-//        contentView.setOnSpanClickedObserver { span ->
-//            var action = span.action
-//            action = if (TextUtils.isEmpty(action)) " no action" else action
-//            Toast.makeText(
-//                this,
-//                action,
-//                Toast.LENGTH_LONG
-//            ).show()
-//            true
-//        }
 
 
+        contentView.setOnSpanClickedObserver(object : RichContentViewDisplay.OnSpanClickedObserver {
+            override fun onSpanClicked(span: ClickableSpan): Boolean {
+                var action: String? = span.getAction()
+                action = if (TextUtils.isEmpty(action)) " no action" else action
+//                Toast.makeText(this@FullBlogActivity, action, Toast.LENGTH_LONG).show()
+                if( URLUtil.isValidUrl(action)){
+                    val browserIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(action))
+                    startActivity(browserIntent)
+                }
+                return true
+            }
+        })
         contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
             Glide.with(this)
                 .load(image)
@@ -164,12 +171,11 @@ class FullBlogActivity : AppCompatActivity() {
 
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
-//        post_content_full.text = text.replace("[img*]", "")
+
 
         val str = RichTextV2.fromHtml(applicationContext, text)
-
-//        val v= RichTextDocumentElement.TextBuilder(editor!!.getHtml()).build()
-        contentView.setText(str)
+        val s=RichTextV2.textFromHtml(this,text)
+        contentView.setText(s)
 
         Handler().postDelayed({
 
@@ -182,66 +188,10 @@ class FullBlogActivity : AppCompatActivity() {
             .alpha(1f)
             .translationY(0f)
 
-//        if (imgLinks != null)
-//            initContentWithImage(text, imgLinks)
+
 
 
     }
-
-//    private fun initContentWithImage(text: String, imgLinks: ArrayList<String>) {
-//        var imgBitmap = ArrayList<Bitmap>(imgLinks.size)
-//        Log.d("TAG", "initContentWithImage: $imgLinks")
-//        GlobalScope.launch {
-//            for (i in 0..imgLinks.size - 1) {
-//                try {
-//                    imgBitmap.add(
-//                        BitmapFactory.decodeStream(
-//                            URL(imgLinks[i]).openConnection().getInputStream()
-//                        )
-//                    )
-//                } catch (e: Exception) {
-//                    Log.d("TAG", "initContentWithImage: ${e.message}")
-//                }
-//            }
-//            withContext(Dispatchers.Main) {
-//                parseContent(text, imgBitmap)
-//            }
-//        }
-//
-//
-//    }
-//
-//    private fun parseContent(text: String, imgBitmaps: ArrayList<Bitmap>) {
-//        if (imgBitmaps == null) {
-//            Log.d("TAG", "parseContent: Returned")
-//            return
-//        }
-//        var count = 0
-//        val final = SpannableStringBuilder()
-//        var i = 0
-//
-//        while (i <= text.length - 1) {
-//
-//            if (text[i] == '[') {
-//                try {
-//                    if (text[i + 1] == 'i' && text[i + 2] == 'm' && text[i + 4] == '*') {
-//
-//                        final.append(imgBitmaps.get(count).let { getImageSpannable(it) })
-//
-//                        count++
-//                        i += 5
-//                    }
-//                } catch (e: java.lang.Exception) {
-//                    Log.d("TAG", "parseContent: ${e.message}")
-//                }
-//            } else
-//                final.append(text[i])
-//            i++
-//        }
-//
-//        Log.d("TAG", "parseContent: $final")
-//        post_content_full.text = final
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

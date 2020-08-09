@@ -78,7 +78,7 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
             val styledText = HtmlCompat.fromHtml(intoString, position, imageGetter, null)
 //            contentView.text = styledText
 
-            holder.postContent.text = styledText.subSequence(0,70).trimStart()
+            holder.postContent.text = styledText.trimStart()
             holder.postContent.append("......")
             holder.likeCount.text = currentPost.getlike_count().toString()
             holder.postUsername.text = currentPost.getusername()
