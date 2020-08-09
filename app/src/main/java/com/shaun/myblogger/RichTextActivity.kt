@@ -165,8 +165,8 @@ class RichTextActivity : AppCompatActivity() {
         val uploadTask: StorageTask<*>
         val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imgUri)
         val baos = ByteArrayOutputStream()
-        val b = Bitmap.createScaledBitmap(bmp, 300, 300, false)
-        b.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+        val b = Bitmap.createScaledBitmap(bmp, 400, 300, false)
+        b.compress(Bitmap.CompressFormat.JPEG, 50, baos)
         val data: ByteArray? = baos.toByteArray()
 
         uploadTask = fileRef.putBytes(data!!)

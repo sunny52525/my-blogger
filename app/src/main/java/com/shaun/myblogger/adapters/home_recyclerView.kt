@@ -1,20 +1,26 @@
 package com.shaun.myblogger.adapters
 
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.res.Resources
 import android.graphics.Color
-import android.text.Html
-import android.text.Spanned
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.FirebaseDatabase
 import com.ldoublem.thumbUplib.ThumbUpView
+import com.shaun.myblogger.HtmlImageGetter
 import com.shaun.myblogger.ModelClasses.PostData
 import com.shaun.myblogger.R
 import java.lang.Integer.parseInt
 import java.lang.Long.parseLong
+
 
 class HomeRecyclerViewAdapter(view: View) : RecyclerView.ViewHolder(view) {
     var postTitle: TextView = view.findViewById(R.id.each_post_title)
@@ -28,8 +34,9 @@ class HomeRecyclerViewAdapter(view: View) : RecyclerView.ViewHolder(view) {
 
 private const val TAG = "VIEW ADAPTER"
 
-class home_recyclerView(private var posts: List<PostData>, private val listener: OnPostClicked) :
+class home_recyclerView(private var posts: List<PostData>, private val listener: OnPostClicked,lifecycleOwner: LifecycleCoroutineScope) :
     RecyclerView.Adapter<HomeRecyclerViewAdapter>() {
+    private val lifecycleOwner=lifecycleOwner
     interface OnPostClicked {
         fun onPostClicked(data: PostData)
         fun onProfileClicked(userId: String)
@@ -65,8 +72,13 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
 
             holder.postTitle.text = currentPost.gettitle()
             val intoString = currentPost.getcontent() + "...."
-            val sp: Spanned? = Html.fromHtml(intoString)
-            holder.postContent.text = (sp)
+//            val sp: Spanned? = Html.fromHtml(intoString)
+
+            val imageGetter = HtmlImageGetter(lifecycleOwner, Resources.getSystem(), holder.postContent)
+            val styledText = HtmlCompat.fromHtml(intoString, position, imageGetter, null)
+//            contentView.text = styledText
+
+            holder.postContent.text = styledText
             holder.likeCount.text = currentPost.getlike_count().toString()
             holder.postUsername.text = currentPost.getusername()
             holder.postTime.text = currentPost.gettime()
@@ -106,5 +118,17 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
 
     }
 
+    fun Context.lifecycleOwner(): LifecycleOwner? {
+        var curContext = this
+        var maxDepth = 20
+        while (maxDepth-- > 0 && curContext !is LifecycleOwner) {
+            curContext = (curContext as ContextWrapper).baseContext
+        }
+        return if (curContext is LifecycleOwner) {
+            curContext as LifecycleOwner
+        } else {
+            null
+        }
+    }
 
 }

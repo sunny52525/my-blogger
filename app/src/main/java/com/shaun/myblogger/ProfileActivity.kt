@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class ProfileActivity : AppCompatActivity(), home_recyclerView.OnPostClicked {
-    private val postAdapter = home_recyclerView(ArrayList(), this)
+    private val postAdapter = home_recyclerView(ArrayList(), this,lifecycleScope)
     private var currentUserData: UserInfo? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

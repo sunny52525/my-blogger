@@ -59,7 +59,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
     api 'com.android.support:multidex:1.0.3'
     api 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
-    implementation 'com.google.firebase:firebase-messaging:20.2.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
     api 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
@@ -74,7 +74,7 @@ dependencies {
 
     //checkbox
     api 'net.igenius:customcheckbox:1.3'
-    kapt 'com.android.databinding:compiler:3.0.1'
+    kapt 'com.android.databinding:compiler:3.1.4'
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -90,5 +90,7 @@ dependencies {
     api "org.ccil.cowan.tagsoup:tagsoup:1.2"
     api 'io.square1:richtext:6.0.25'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06'
 
 }

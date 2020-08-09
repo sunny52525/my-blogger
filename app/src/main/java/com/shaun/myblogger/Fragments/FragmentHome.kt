@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 private const val TAG = "HOME FRAG"
 
 class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
-    private val postAdapter = home_recyclerView(ArrayList(), this)
+    private val postAdapter = home_recyclerView(ArrayList(), this,lifecycleScope)
     private var postList: ArrayList<PostData>? = null
     private var firebaseUser: FirebaseUser? = null
     override fun onCreateView(
