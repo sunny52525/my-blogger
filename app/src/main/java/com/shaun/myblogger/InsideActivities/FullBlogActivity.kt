@@ -7,9 +7,11 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import android.text.style.QuoteSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -30,11 +32,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hzn.lib.EasyTransition
-import com.shaun.myblogger.HtmlImageGetter
-import com.shaun.myblogger.LoginActivity
+import com.shaun.myblogger.*
 import com.shaun.myblogger.ModelClasses.PostData
-import com.shaun.myblogger.ProfileActivity
-import com.shaun.myblogger.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_full_blog.*
 
@@ -169,7 +168,8 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 
         val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
-        val styledText = HtmlCompat.fromHtml(text.trimIndent(), taskId, imageGetter, null)
+        val styledText = HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
+        val styledText2=replaceQuoteSpans(styledText as Spannable)
         contentView.text = styledText
         contentView.setMovementMethod(LinkMovementMethod.getInstance())
         Handler().postDelayed({
@@ -185,6 +185,32 @@ class FullBlogActivity : AppCompatActivity() {
 
 
     }
+
+
+    private fun replaceQuoteSpans(spannable: Spannable) {
+        val quoteSpans: Array<QuoteSpan> =
+            spannable.getSpans(0, spannable.length-1, QuoteSpan::class.java)
+        for (quoteSpan in quoteSpans) {
+            val start: Int = spannable.getSpanStart(quoteSpan)
+            val end: Int = spannable.getSpanEnd(quoteSpan)
+            val flags: Int = spannable.getSpanFlags(quoteSpan)
+            spannable.removeSpan(quoteSpan)
+            spannable.setSpan(
+                CustomQuoteSpanClass(
+                    resources.getColor(R.color.Black),
+                    resources.getColor(R.color.blue_normal),
+                    10F,
+                    50F
+                ),
+                start,
+                end,
+                flags
+            )
+        }
+    }
+
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
