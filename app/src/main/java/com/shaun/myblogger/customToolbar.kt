@@ -41,6 +41,10 @@ class ExampleToolbar : EditorToolbar {
         addCommand(ItalicCommand())
         addCommand(BoldCommand())
         addCommand(UnderlineCommand())
+        addCommand(InsertBulletListCommand())
+        addCommand(AlignCenterCommand())
+        addCommand(InsertLinkCommand())
+
 
 
     }

@@ -75,7 +75,7 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
 //            val sp: Spanned? = Html.fromHtml(intoString)
 
             val imageGetter = HtmlImageGetter(lifecycleOwner, Resources.getSystem(), holder.postContent)
-            val styledText = HtmlCompat.fromHtml(intoString, position, imageGetter, null)
+            val styledText = HtmlCompat.fromHtml(intoString.trimIndent(), position, imageGetter, null)
 //            contentView.text = styledText
 
             holder.postContent.text = styledText.trimStart()
