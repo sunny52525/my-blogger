@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <androidx.appcompat.widget.Toolbar
+<!--
+ <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,5 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editor">
 
     </com.google.android.material.button.MaterialButton>
+
+-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

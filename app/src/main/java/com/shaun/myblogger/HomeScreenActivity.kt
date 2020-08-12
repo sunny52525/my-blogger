@@ -3,15 +3,12 @@ package com.shaun.myblogger
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
-import android.text.Html
-import android.text.Spanned
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -50,7 +47,7 @@ import kotlin.collections.HashMap
 private const val TAG = "HOMESCRENN"
 
 class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener {
-    private val RequestCode = 438
+
     var userRef: DatabaseReference? = null
     private var storageRef: StorageReference? = null
     private var content = ""
@@ -59,6 +56,8 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
     val ref: FirebaseDatabase? = null
     var UserData: UserInfo? = null
 
+    private var editorToolbar: ExampleToolbar? = null
+    private var imgUri:Uri?=null
     var postCover: Uri? = null
     private var mTitles = ArrayList<String>()
     private var imageUrls = ArrayList<String>()
@@ -72,10 +71,21 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 *resources.getStringArray(R.array.menuOptions)
             )
         )
+
+
+        editorToolbar = findViewById(R.id.editorToolbar)
+        editorToolbar!!.editor = editor
+        editor!!.setEditorFontSize(20)
+        editor!!.setPadding((4 * resources.displayMetrics.density).toInt())
+        editor!!.focusEditorAndShowKeyboardDelayed()
+        select_img_rich.setOnClickListener {
+            pickImg(102)
+        }
+
         post_it.setOnClickListener {
 
 
-            if (post_title.text!!.isNotEmpty() && post_content.text!!.isNotEmpty()) {
+            if (post_title.text!!.isNotEmpty() && editor!!.getHtml().isNotEmpty()) {
                 hideKeyboard(this)
                 SavePostToSerer()
 
@@ -92,19 +102,20 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             hideKeyboard(this)
             post_title.setText("")
             postCover = null
-            post_content.setText("")
+//            post_content.setText("")
+            editor.setHtml("")
         }
         select_img.setOnClickListener {
             Toast.makeText(this, "Select Cover Image", Toast.LENGTH_SHORT).show()
-            pickImg()
+            pickImg(101)
         }
 
-        post_content.setOnClickListener {
-
-            val intent = Intent(applicationContext, RichTextActivity::class.java)
-            intent.putExtra("cached", post_content.text.toString())
-            startActivity(intent)
-        }
+//        post_content.setOnClickListener {
+//
+//            val intent = Intent(applicationContext, RichTextActivity::class.java)
+//            intent.putExtra("cached", post_content.text.toString())
+//            startActivity(intent)
+//        }
         setNames()
         configureBackdrop()
         // Initialize the views
@@ -128,58 +139,59 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
 
     private fun SavePostToSerer() {
+        editor.requestFocus()
+        Handler().postDelayed({
+            val sdf = SimpleDateFormat("dd/MM hh:mm")
+            val currentTime = sdf.format(Date())
 
-        val sdf = SimpleDateFormat("dd/MM hh:mm")
-        val currentTime = sdf.format(Date())
+            val postHashMap = HashMap<String, Any>()
+            val key = FirebaseDatabase.getInstance().getReference("posts").push().key
+            postHashMap["id"] = key.toString()
+            postHashMap["nameOP"] = UserData!!.getname()
+            postHashMap["username"] = UserData!!.getusername()
+            postHashMap["time"] = currentTime
+            postHashMap["title"] = post_title.text.toString()
 
-        val postHashMap = HashMap<String, Any>()
-        val key = FirebaseDatabase.getInstance().getReference("posts").push().key
-        postHashMap["id"] = key.toString()
-        postHashMap["nameOP"] = UserData!!.getname()
-        postHashMap["username"] = UserData!!.getusername()
-        postHashMap["time"] = currentTime
-        postHashMap["title"] = post_title.text.toString()
-        postHashMap["content"] = content
-        content = ""
-        postHashMap["like_count"] = 0
-        postHashMap["photosInpost"] = imageUrls
-        if (checkbox.isChecked) {
-            postHashMap["nameOP"] = "Anonymous"
-            postHashMap["username"] = "anonymous"
+            postHashMap["content"] = editor!!.getHtml()
+            content = ""
+            postHashMap["like_count"] = 0
+            postHashMap["photosInpost"] = imageUrls
+            if (checkbox.isChecked) {
+                postHashMap["nameOP"] = "Anonymous"
+                postHashMap["username"] = "anonymous"
 
-        } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
-
-
-        val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
-
+            } else postHashMap["userId"] = FirebaseAuth.getInstance().currentUser!!.uid
 
 
-        reference.setValue(postHashMap).addOnCompleteListener {
-            if (!checkbox.isChecked) {
-                saveId(key,postHashMap)
+            val reference = FirebaseDatabase.getInstance().reference.child("posts").child(key!!)
+
+
+
+            reference.setValue(postHashMap).addOnCompleteListener {
+                if (!checkbox.isChecked) {
+                    saveId(key,postHashMap)
+                }
+
             }
 
-        }
-
-        if (postCover == null)
-            reference.setValue(postHashMap)
-        else {
-            uploadImg(postHashMap, reference)
-        }
+            if (postCover == null)
+                reference.setValue(postHashMap)
+            else {
+                uploadImg(postHashMap, reference)
+            }
 
 
-        post_title.setText("")
-        post_content.setText("")
+            post_title.setText("")
+//        post_content.setText("")
 
+            editor.setHtml("")
+
+        },1000)
 
     }
 
     private fun saveId(key: String,postMap: HashMap<String, Any>) {
         val reference = FirebaseDatabase.getInstance().reference.child("user-posts").child(FirebaseAuth.getInstance().currentUser!!.uid).child(key).setValue(postMap)
-
-
-
-
     }
 
     private fun uploadImg(postMap: HashMap<String, Any>, reference: DatabaseReference) {
@@ -220,19 +232,57 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
 
     }
 
-    private fun pickImg() {
+    private fun pickImg( requestCode: Int) {
         val intent = Intent()
         intent.type = "image/*"
+//        Toast.makeText(this, "$requestCode", Toast.LENGTH_SHORT).show()
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, RequestCode)
+        startActivityForResult(intent, requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
+        if (requestCode == 101 && resultCode == Activity.RESULT_OK && data!!.data != null) {
             postCover = data.data
             Log.d(TAG, "onActivityResult: ${postCover}")
+        }else if(requestCode==102 && resultCode == Activity.RESULT_OK && data!!.data != null ){
+            imgUri = data.data
+            uploadImageInBetween(imgUri)
+            Log.d("TAG", "onActivityResult: ${imgUri}")
         }
+    }
+
+    private fun uploadImageInBetween(imgUri: Uri?) {
+        storageRef = FirebaseStorage.getInstance().reference.child("Post Images")
+        val progressBar = ProgressDialog(this)
+        progressBar.setMessage("Please wait,Posting..")
+        progressBar.show()
+
+        val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+        val uploadTask: StorageTask<*>
+        val bmp: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imgUri)
+        val baos = ByteArrayOutputStream()
+        val b = Bitmap.createScaledBitmap(bmp, 400, 300, false)
+        b.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+        val data: ByteArray? = baos.toByteArray()
+
+        uploadTask = fileRef.putBytes(data!!)
+        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+            if (!it.isSuccessful) {
+                it.exception?.let {
+                    throw  it
+                }
+            }
+            return@Continuation fileRef.downloadUrl
+        }).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val downloadUrl = it.result
+                val url = downloadUrl.toString()
+                editor!!.insertImage(url, "Image")
+                progressBar.dismiss()
+            }
+        }
+
     }
 
     private fun setNames() {
@@ -399,12 +449,15 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         // With the reference of the BottomSheetBehavior stored
         if (mBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
             hide()
-            post_content.setText("")
+//            if (!editorToolbar!!.handlesBackButtonPress()) {
+//                super.onBackPressed()
+//            }
             post_title.setText("")
-
+            editor.setHtml("")
         } else {
             super.onBackPressed()
         }
+
 
 
     }
@@ -454,25 +507,10 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        val sharedpref = getSharedPreferences("MyData", Context.MODE_PRIVATE)
-        val data = sharedpref.getString("content", "")
-        Log.d(TAG, "onResumeFragments: ")
-        if (data?.isNotEmpty()!!) {
-            content = data
-            Log.d(TAG, "onResumeFragments: $data")
-            val sp: Spanned? = Html.fromHtml(data)
-
-            post_content.setText(sp)
-
-
-        }
-
-        sharedpref.edit().clear().clear().apply()
 
     }
+
+
+
+
 }

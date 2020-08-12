@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -16,6 +17,24 @@
         app:icon="@drawable/met_ic_clear"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <at.markushi.ui.CircleButton
+        android:id="@+id/post_it"
+        android:layout_width="81dp"
+        android:layout_height="57dp"
+
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+
+        android:src="@drawable/tick"
+        app:cb_color="@color/colorPrimaryDark"
+        app:cb_pressedRingWidth="8dip"
+        app:layout_constraintRight_toLeftOf="@+id/hide_bsb"
+        app:layout_constraintStart_toEndOf="@+id/froces"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -51,13 +70,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@+id/froces"
-        android:layout_margin="15dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="40dp"
         android:background="?colorPrimary"
         android:orientation="vertical"
-        android:paddingLeft="72dp"
+
         android:paddingTop="16dp"
-        android:paddingRight="16dp"
+
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintCircleRadius="40dp"
@@ -81,13 +100,14 @@
 
         </TextView>
 
+
         <net.igenius.customcheckbox.CustomCheckBox
             android:id="@+id/checkbox"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_gravity="right"
 
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="24dp"
             android:foregroundGravity="bottom"
             app:color_checked="@color/colorPrimaryDark"
             app:color_tick="@color/colorPrimary"
@@ -95,78 +115,53 @@
             app:layout_constraintBottom_toTopOf="@+id/post_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.024"
             app:small_tick="false">
 
         </net.igenius.customcheckbox.CustomCheckBox>
 
+        <com.shaun.myblogger.ExampleToolbar
+            android:id="@+id/editorToolbar"
+            android:layout_width="301dp"
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/post_content"
-            android:layout_width="293dp"
-            android:layout_height="200dp"
-
-            android:focusable="false"
-            android:hint="Post"
-
-            android:minHeight="100dp"
-            android:screenReaderFocusable="true"
-
-            android:scrollIndicators="right"
-            android:scrollbars="vertical"
-            android:textAlignment="textStart"
-
-            android:textSize="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/post_title"
-            app:met_baseColor="@android:color/white"
-            app:met_floatingLabel="highlight"
-
-            app:met_minCharacters="60" />
-
-        <ImageView
-            android:id="@+id/select_img"
-            android:layout_width="47dp"
             android:layout_height="50dp"
+            android:layout_marginTop="10dp"
 
-            android:src="@drawable/select"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/post_it"
-            app:layout_constraintVertical_bias="0.0">
+            android:layout_marginEnd="52dp"
 
-        </ImageView>
-
-        <at.markushi.ui.CircleButton
-            android:id="@+id/post_it"
-            android:layout_width="81dp"
-            android:layout_height="57dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="212dp"
-            android:layout_toRightOf="@id/select_img"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/tick"
-            app:cb_color="@color/colorPrimaryDark"
-            app:cb_pressedRingWidth="8dip"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/post_content"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/post_title">
+
+        </com.shaun.myblogger.ExampleToolbar>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/select_img_rich"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+
+            android:background="@color/White"
+            android:textAlignment="center"
+
+            app:icon="@drawable/ic_baseline_image_24"
+            app:layout_constraintBottom_toBottomOf="@+id/editorToolbar"
+            app:layout_constraintEnd_toStartOf="@+id/editorToolbar"
+            app:layout_constraintTop_toTopOf="@+id/editorToolbar">
+
+        </com.google.android.material.button.MaterialButton>
+
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/post_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="370dp"
+            android:layout_marginLeft="16dp"
+            android:layout_height="79dp"
 
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             android:hint="Title"
-            android:textSize="30sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.931"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
             app:met_baseColor="@android:color/white"
@@ -174,18 +169,37 @@
             app:met_maxCharacters="20"
             app:met_primaryColor="?colorAccent"
             app:met_singleLineEllipsis="true" />
+
+        <ImageView
+            android:id="@+id/select_img"
+            android:layout_width="51dp"
+            android:layout_height="32dp"
+
+            android:src="@drawable/select"
+            app:layout_constraintEnd_toStartOf="@+id/textView"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/post_title"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </ImageView>
+
+        <net.dankito.richtexteditor.android.RichTextEditor
+            android:id="@+id/editor"
+            android:layout_width="410dp"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:layout_marginTop="16dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editorToolbar">
+
+
+        </net.dankito.richtexteditor.android.RichTextEditor>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

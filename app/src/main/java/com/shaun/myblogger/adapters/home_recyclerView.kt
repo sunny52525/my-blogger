@@ -111,6 +111,7 @@ class home_recyclerView(private var posts: List<PostData>, private val listener:
             holder.likeCount.setOnClickListener(eachPostClickListener)
 
             val viewProfileListener = View.OnClickListener {
+                if(holder.postUsername.text!="anonymous")
                 listener.onProfileClicked(currentPost.getuserId())
             }
             holder.postUsername.setOnClickListener(viewProfileListener)
