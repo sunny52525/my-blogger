@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.Html
+import android.util.Log
 import android.widget.TextView
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.squareup.picasso.Picasso
@@ -25,24 +26,26 @@ class HtmlImageGetter(
 
         scope.launch(Dispatchers.IO) {
             runCatching {
-                val bitmap :Bitmap=Picasso.get().load(url).get()
-//                    glide
-//                    .asBitmap()
-//                    .load(url)
-//                    .submit()
-//                    .get()
+                Log.d("TAG", "getDrawable: $url")
+
+                val bitmap=    Picasso.get().load(url)
+                    .get()
+
+
+
 
                 val drawable = BitmapDrawable(res,bitmap)
 
-                val scale = 1.25 // This makes the image scale in size.
+                val scale = 1.0 // This makes the image scale in size.
                 val width = (drawable.intrinsicWidth * scale).roundToInt()
                 val height = (drawable.intrinsicHeight * scale).roundToInt()
-                drawable.setBounds(0, 0, width, height)
+                drawable.setBounds(10, 20, 400, 300)
 
                 holder.setDrawable(drawable)
-                holder.setBounds(0, 0, width, height)
+                holder.setBounds(10, 20, 400, 300)
 
-                withContext(Dispatchers.Main) { htmlTextView.text = htmlTextView.text }
+                withContext(Dispatchers.Main) {
+                    htmlTextView.text = htmlTextView.text }
             }
         }
 
@@ -60,4 +63,5 @@ class HtmlImageGetter(
             this.drawable = drawable
         }
     }
+
 }

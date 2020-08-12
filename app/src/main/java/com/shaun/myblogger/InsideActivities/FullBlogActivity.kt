@@ -171,6 +171,8 @@ class FullBlogActivity : AppCompatActivity() {
         val styledText = HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
         val styledText2=replaceQuoteSpans(styledText as Spannable)
         contentView.text = styledText
+
+        Log.d("TAG", "initOtherViews: ${text}")
         contentView.setMovementMethod(LinkMovementMethod.getInstance())
         Handler().postDelayed({
 
