@@ -76,8 +76,11 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
         editorToolbar = findViewById(R.id.editorToolbar)
         editorToolbar!!.editor = editor
         editor!!.setEditorFontSize(20)
+        editor.setPlaceholder("Type Here!")
         editor!!.setPadding((4 * resources.displayMetrics.density).toInt())
         editor!!.focusEditorAndShowKeyboardDelayed()
+        editor.setEditorFontColor(resources.getColor(R.color.White))
+        editor.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         select_img_rich.setOnClickListener {
             pickImg(102)
         }
@@ -110,12 +113,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
             pickImg(101)
         }
 
-//        post_content.setOnClickListener {
-//
-//            val intent = Intent(applicationContext, RichTextActivity::class.java)
-//            intent.putExtra("cached", post_content.text.toString())
-//            startActivity(intent)
-//        }
+
         setNames()
         configureBackdrop()
         // Initialize the views
