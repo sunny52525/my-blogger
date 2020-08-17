@@ -327,10 +327,16 @@ class FullBlogActivity : AppCompatActivity() {
         if (userId == "") {
             item.isVisible = false
         }
+        val report = menu.findItem(R.id.menu_blog_report_post)
         val del = menu.findItem(R.id.menu_blog_delete)
         if (postData.getuserId() != FirebaseAuth.getInstance().currentUser!!.uid) {
-
+            Log.d(
+                "TAG",
+                "  delete ${postData.getuserId()} +++ ${FirebaseAuth.getInstance().currentUser!!.uid}"
+            )
             del.isVisible = false
+        } else {
+            report.isVisible = false
         }
 
         return true
