@@ -58,7 +58,6 @@ class FullBlogActivity : AppCompatActivity() {
             findViewById(R.id.post_content_full)
 
 
-
 //        contentView.setOnSpanClickedObserver(object : RichContentViewDisplay.OnSpanClickedObserver {
 //            override fun onSpanClicked(span: ClickableSpan): Boolean {
 //                var action: String? = span.getAction()
@@ -79,12 +78,6 @@ class FullBlogActivity : AppCompatActivity() {
 //                .skipMemoryCache(true)
 //                .into(GlideTarget(this, urlBitmapSpan))
 //        }
-
-
-
-
-
-
 
 
         share_blog.setOnClickListener {
@@ -136,7 +129,7 @@ class FullBlogActivity : AppCompatActivity() {
 
         val strBuilder = StringBuilder()
         strBuilder.appendln("Read this Blog Post by $user")
-        strBuilder.appendln("https://my-blogger-sunny.herokuapp.com/posts/$id")
+        strBuilder.appendln("https://blogger-sunny.herokuapp.com//posts/$id")
 
         val shareIntent =
             Intent(Intent.ACTION_SEND)
@@ -168,8 +161,9 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 
         val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
-        val styledText = HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
-        val styledText2=replaceQuoteSpans(styledText as Spannable)
+        val styledText =
+            HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
+        val styledText2 = replaceQuoteSpans(styledText as Spannable)
         contentView.text = styledText
 
         Log.d("TAG", "initOtherViews: ${text}")
@@ -191,7 +185,7 @@ class FullBlogActivity : AppCompatActivity() {
 
     private fun replaceQuoteSpans(spannable: Spannable) {
         val quoteSpans: Array<QuoteSpan> =
-            spannable.getSpans(0, spannable.length-1, QuoteSpan::class.java)
+            spannable.getSpans(0, spannable.length - 1, QuoteSpan::class.java)
         for (quoteSpan in quoteSpans) {
             val start: Int = spannable.getSpanStart(quoteSpan)
             val end: Int = spannable.getSpanEnd(quoteSpan)
@@ -210,8 +204,6 @@ class FullBlogActivity : AppCompatActivity() {
             )
         }
     }
-
-
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -238,6 +230,19 @@ class FullBlogActivity : AppCompatActivity() {
                     }
                 }
 
+            }
+            R.id.menu_blog_delete -> {
+                val postId = postData.getid()
+                val ref = FirebaseDatabase.getInstance().reference.child("posts").child(postId)
+                    .removeValue()
+                    .addOnCompleteListener {
+
+                        val postref = FirebaseDatabase.getInstance().reference.child("user-posts")
+                            .child(FirebaseAuth.getInstance().currentUser!!.uid).child(postId)
+                            .removeValue().addOnCompleteListener {
+                                finish()
+                            }
+                    }
             }
             R.id.full_blog_view_profile -> {
 
@@ -322,7 +327,11 @@ class FullBlogActivity : AppCompatActivity() {
         if (userId == "") {
             item.isVisible = false
         }
+        val del = menu.findItem(R.id.menu_blog_delete)
+        if (postData.getuserId() != FirebaseAuth.getInstance().currentUser!!.uid) {
 
+            del.isVisible = false
+        }
 
         return true
     }
@@ -336,10 +345,10 @@ class FullBlogActivity : AppCompatActivity() {
         val appLinkAction = intent.action
         val appLinkData: Uri? = intent.data
         if (Intent.ACTION_VIEW == appLinkAction) {
-            appLinkData?.lastPathSegment?.also { recipeId ->
-                Uri.parse("content://com.recipe_app/recipe/")
+            appLinkData?.lastPathSegment?.also {
+                Uri.parse("content://com.shaun.myblogger/posts/")
                     .buildUpon()
-                    .appendPath(recipeId)
+                    .appendPath(it)
                     .build().also { appData ->
                         Log.d("TAG", "handleIntent: ${appData.lastPathSegment}")
                         val postid = appData.lastPathSegment.toString()
