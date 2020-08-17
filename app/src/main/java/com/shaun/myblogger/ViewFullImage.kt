@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_view_full_image.*
 import java.io.File
 
 class ViewFullImage : AppCompatActivity() {
-
+   lateinit var isImage: String
     private val REQUEST_EXTERNAL_STORAGE = 1
     var url = ""
     private val PERMISSIONS_STORAGE = arrayOf<String>(
@@ -41,6 +41,7 @@ class ViewFullImage : AppCompatActivity() {
 
         url = intent.getStringExtra("url")
         url = url.replace("amp;", "")
+        isImage = intent.getStringExtra("0")
         Log.d("TAG", "onCreate: $url")
         Picasso.get().load(url).placeholder(resources.getDrawable(R.drawable.user))
             .into(image_viewer)
@@ -56,6 +57,12 @@ class ViewFullImage : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_image_viewer, menu)
+
+        val item = menu?.findItem(R.id.image_viewer_delete)
+        if (isImage == "false") {
+            item?.isVisible = false
+        }
+
         return true
     }
 

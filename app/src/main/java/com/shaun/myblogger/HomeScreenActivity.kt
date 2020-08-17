@@ -71,7 +71,7 @@ class HomeScreenActivity : AppCompatActivity(), DuoMenuView.OnMenuClickListener 
                 *resources.getStringArray(R.array.menuOptions)
             )
         )
-
+        hideKeyboard(this)
 
         editorToolbar = findViewById(R.id.editorToolbar)
         editorToolbar!!.editor = editor

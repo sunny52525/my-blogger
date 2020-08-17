@@ -11,7 +11,9 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
 import android.text.style.QuoteSpan
+import android.text.style.URLSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.gifdecoder.GifHeaderParser
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -161,8 +164,9 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 
         val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
-        val styledText =
+        var styledText =
             HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
+        val ImageClickHandle = ImageClick(styledText as Spannable)
         val styledText2 = replaceQuoteSpans(styledText as Spannable)
         contentView.text = styledText
 
@@ -409,5 +413,21 @@ class FullBlogActivity : AppCompatActivity() {
 
     }
 
+    fun ImageClick(html: Spannable) {
+        for (span in html.getSpans(0, html.length, ImageSpan::class.java)) {
+            val flags = html.getSpanFlags(span)
+            val start = html.getSpanStart(span)
+            val end = html.getSpanEnd(span)
+            html.setSpan(object : URLSpan(span.source) {
+                override fun onClick(v: View) {
+                    Log.d(GifHeaderParser.TAG, "onClick:" + span.source)
+                    val intent = Intent(this@FullBlogActivity, ViewFullImage::class.java)
+                    intent.putExtra("url", span.source)
+                    intent.putExtra("0", "false")
+                    startActivity(intent)
+                }
+            }, start, end, flags)
+        }
+    }
 
 }

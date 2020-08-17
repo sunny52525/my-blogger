@@ -1,12 +1,16 @@
 package com.shaun.myblogger.Fragments
 
+import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,13 +40,12 @@ class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         container!!.removeAllViews()
-
-
-//        val fab=view?.findViewById<FloatingActionButton>(R.id.fab_add_post)
-//        if(fab !=null)
-//        container.addView(fab)
-        // Inflate the layout for this fragment
+        Handler().postDelayed({
+            hideKeyboard(activity as Activity)
+            Log.d(TAG, "KeyBoard Hide Called")
+        }, 1000)
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val refreshView =
             view.findViewById<com.dinuscxj.refresh.RecyclerRefreshLayout>(R.id.refresh_layout)
@@ -56,6 +59,8 @@ class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
         val recycerView = view.findViewById<RecyclerView>(R.id.recycler_view_home)
         recycerView.layoutManager = LinearLayoutManager(context)
         recycerView.adapter = postAdapter
+
+
         return view
     }
 
@@ -123,6 +128,22 @@ class FragmentHome : Fragment(), home_recyclerView.OnPostClicked {
         startActivity(intent)
 
 
+    }
+
+    fun hideKeyboard(activity: Activity) {
+        try {
+            val inputManager = activity
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val currentFocusedView = activity.currentFocus
+            if (currentFocusedView != null) {
+                inputManager.hideSoftInputFromWindow(
+                    currentFocusedView.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 
 

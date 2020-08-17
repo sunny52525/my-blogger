@@ -13,7 +13,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
 class HtmlImageGetter(
     private val scope: LifecycleCoroutineScope,
@@ -28,24 +27,28 @@ class HtmlImageGetter(
             runCatching {
                 Log.d("TAG", "getDrawable: $url")
 
-                val bitmap=    Picasso.get().load(url)
+                val bitmap = Picasso.get().load(url)
                     .get()
 
 
+                val drawable = BitmapDrawable(res, bitmap)
 
 
-                val drawable = BitmapDrawable(res,bitmap)
+                val width = getScreenWidth() - 150
+                val aspectRatio: Float =
+                    (drawable.intrinsicWidth.toFloat()) / (drawable.intrinsicHeight.toFloat())
 
-                val scale = 1.0 // This makes the image scale in size.
-                val width = (drawable.intrinsicWidth * scale).roundToInt()
-                val height = (drawable.intrinsicHeight * scale).roundToInt()
-                drawable.setBounds(10, 20, 400, 300)
+                val height = width / aspectRatio
+
+
+                drawable.setBounds(10, 20, width, height.toInt())
 
                 holder.setDrawable(drawable)
-                holder.setBounds(10, 20, 400, 300)
+                holder.setBounds(10, 20, width, height.toInt())
 
                 withContext(Dispatchers.Main) {
-                    htmlTextView.text = htmlTextView.text }
+                    htmlTextView.text = htmlTextView.text
+                }
             }
         }
 
@@ -63,5 +66,9 @@ class HtmlImageGetter(
             this.drawable = drawable
         }
     }
+
+    fun getScreenWidth() =
+        Resources.getSystem().displayMetrics.widthPixels
+
 
 }
