@@ -129,7 +129,7 @@ class FullBlogActivity : AppCompatActivity() {
 
         val strBuilder = StringBuilder()
         strBuilder.appendln("Read this Blog Post by $user")
-        strBuilder.appendln("https://blogger-sunny.herokuapp.com//posts/$id")
+        strBuilder.appendln("https://blogger-sunny.herokuapp.com/posts/$id")
 
         val shareIntent =
             Intent(Intent.ACTION_SEND)
