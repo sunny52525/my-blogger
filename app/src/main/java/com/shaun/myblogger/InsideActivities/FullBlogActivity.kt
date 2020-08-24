@@ -27,7 +27,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.gifdecoder.GifHeaderParser
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -60,34 +59,9 @@ class FullBlogActivity : AppCompatActivity() {
         contentView =
             findViewById(R.id.post_content_full)
 
-
-//        contentView.setOnSpanClickedObserver(object : RichContentViewDisplay.OnSpanClickedObserver {
-//            override fun onSpanClicked(span: ClickableSpan): Boolean {
-//                var action: String? = span.getAction()
-//                action = if (TextUtils.isEmpty(action)) " no action" else action
-////                Toast.makeText(this@FullBlogActivity, action, Toast.LENGTH_LONG).show()
-//                if (URLUtil.isValidUrl(action)) {
-//                    val browserIntent =
-//                        Intent(Intent.ACTION_VIEW, Uri.parse(action))
-//                    startActivity(browserIntent)
-//                }
-//                return true
-//            }
-//        })
-//        contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
-//            Glide.with(this)
-//                .load(image)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                .skipMemoryCache(true)
-//                .into(GlideTarget(this, urlBitmapSpan))
-//        }
-
-
-        share_blog.setOnClickListener {
-            sharePost(postData.getid(), postData.getnameOp())
-        }
-
-
+   share_blog.setOnClickListener {
+       sharePost(postData.getid(), postData.getnameOp())
+   }
 
 
         header.setOnClickListener {
@@ -164,7 +138,7 @@ class FullBlogActivity : AppCompatActivity() {
         layoutAbout = findViewById(R.id.test)
 
         val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
-        var styledText =
+        val styledText =
             HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
         val ImageClickHandle = ImageClick(styledText as Spannable)
         val styledText2 = replaceQuoteSpans(styledText as Spannable)
@@ -420,7 +394,6 @@ class FullBlogActivity : AppCompatActivity() {
             val end = html.getSpanEnd(span)
             html.setSpan(object : URLSpan(span.source) {
                 override fun onClick(v: View) {
-                    Log.d(GifHeaderParser.TAG, "onClick:" + span.source)
                     val intent = Intent(this@FullBlogActivity, ViewFullImage::class.java)
                     intent.putExtra("url", span.source)
                     intent.putExtra("0", "false")
