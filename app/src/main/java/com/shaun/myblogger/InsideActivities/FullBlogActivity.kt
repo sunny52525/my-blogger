@@ -1,6 +1,5 @@
 package com.shaun.myblogger.InsideActivities
 
-import GlideTarget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Intent
@@ -8,21 +7,26 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
 import android.text.SpannableString
-import android.text.TextUtils
+import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
+import android.text.style.QuoteSpan
+import android.text.style.URLSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -30,13 +34,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hzn.lib.EasyTransition
-import com.shaun.myblogger.LoginActivity
+import com.shaun.myblogger.*
 import com.shaun.myblogger.ModelClasses.PostData
-import com.shaun.myblogger.ProfileActivity
-import com.shaun.myblogger.R
 import com.squareup.picasso.Picasso
-import io.square1.richtextlib.ui.RichContentView
-import io.square1.richtextlib.v2.RichTextV2
 import kotlinx.android.synthetic.main.activity_full_blog.*
 
 
@@ -46,7 +46,7 @@ class FullBlogActivity : AppCompatActivity() {
     var userId = ""
     private var savedInst: Bundle? = null
     lateinit var postData: PostData
-    lateinit var contentView: RichContentView
+    lateinit var contentView: TextView
     private var layoutAbout: androidx.core.widget.NestedScrollView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,40 +57,11 @@ class FullBlogActivity : AppCompatActivity() {
         handleIntent(intent)
 
         contentView =
-            findViewById<RichContentView>(R.id.post_content_full)
+            findViewById(R.id.post_content_full)
 
-        contentView.setOnSpanClickedObserver { span ->
-            var action = span.action
-            action = if (TextUtils.isEmpty(action)) " no action" else action
-            Toast.makeText(
-                this,
-                action,
-                Toast.LENGTH_LONG
-            ).show()
-            true
-        }
-
-
-        contentView.setUrlBitmapDownloader { urlBitmapSpan, image ->
-            Glide.with(this)
-                .load(image)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(GlideTarget(this, urlBitmapSpan))
-        }
-
-
-
-
-
-
-
-
-        share_blog.setOnClickListener {
-            sharePost(postData.getid(), postData.getnameOp())
-        }
-
-
+   share_blog.setOnClickListener {
+       sharePost(postData.getid(), postData.getnameOp())
+   }
 
 
         header.setOnClickListener {
@@ -135,7 +106,7 @@ class FullBlogActivity : AppCompatActivity() {
 
         val strBuilder = StringBuilder()
         strBuilder.appendln("Read this Blog Post by $user")
-        strBuilder.appendln("https://my-blogger-sunny.herokuapp.com/posts/$id")
+        strBuilder.appendln("https://blogger-sunny.herokuapp.com/posts/$id")
 
         val shareIntent =
             Intent(Intent.ACTION_SEND)
@@ -154,24 +125,27 @@ class FullBlogActivity : AppCompatActivity() {
 
 
         val tvName = findViewById<CollapsingToolbarLayout>(R.id.each_post_title)
-        tvName!!.title = heading
+        tvName!!.title = heading.trimIndent()
     }
 
     private fun initOtherViews(text: String, imgLinks: String) {
         if (imgLinks.isNotEmpty()) {
             Picasso.get().load(imgLinks).into(header)
         }
-        Log.e("TAG", "initOtherViews: $text")
+
 
         poster.text = postData.getusername()
         layoutAbout = findViewById(R.id.test)
-//        post_content_full.text = text.replace("[img*]", "")
 
-        val str = RichTextV2.fromHtml(applicationContext, text)
+        val imageGetter = HtmlImageGetter(lifecycleScope, resources, contentView)
+        val styledText =
+            HtmlCompat.fromHtml(text.trimIndent().trimStart(), taskId, imageGetter, null)
+        val ImageClickHandle = ImageClick(styledText as Spannable)
+        val styledText2 = replaceQuoteSpans(styledText as Spannable)
+        contentView.text = styledText
 
-//        val v= RichTextDocumentElement.TextBuilder(editor!!.getHtml()).build()
-        contentView.setText(str)
-
+        Log.d("TAG", "initOtherViews: ${text}")
+        contentView.setMovementMethod(LinkMovementMethod.getInstance())
         Handler().postDelayed({
 
             layoutAbout!!.visibility = View.VISIBLE
@@ -183,66 +157,32 @@ class FullBlogActivity : AppCompatActivity() {
             .alpha(1f)
             .translationY(0f)
 
-//        if (imgLinks != null)
-//            initContentWithImage(text, imgLinks)
-
 
     }
 
-//    private fun initContentWithImage(text: String, imgLinks: ArrayList<String>) {
-//        var imgBitmap = ArrayList<Bitmap>(imgLinks.size)
-//        Log.d("TAG", "initContentWithImage: $imgLinks")
-//        GlobalScope.launch {
-//            for (i in 0..imgLinks.size - 1) {
-//                try {
-//                    imgBitmap.add(
-//                        BitmapFactory.decodeStream(
-//                            URL(imgLinks[i]).openConnection().getInputStream()
-//                        )
-//                    )
-//                } catch (e: Exception) {
-//                    Log.d("TAG", "initContentWithImage: ${e.message}")
-//                }
-//            }
-//            withContext(Dispatchers.Main) {
-//                parseContent(text, imgBitmap)
-//            }
-//        }
-//
-//
-//    }
-//
-//    private fun parseContent(text: String, imgBitmaps: ArrayList<Bitmap>) {
-//        if (imgBitmaps == null) {
-//            Log.d("TAG", "parseContent: Returned")
-//            return
-//        }
-//        var count = 0
-//        val final = SpannableStringBuilder()
-//        var i = 0
-//
-//        while (i <= text.length - 1) {
-//
-//            if (text[i] == '[') {
-//                try {
-//                    if (text[i + 1] == 'i' && text[i + 2] == 'm' && text[i + 4] == '*') {
-//
-//                        final.append(imgBitmaps.get(count).let { getImageSpannable(it) })
-//
-//                        count++
-//                        i += 5
-//                    }
-//                } catch (e: java.lang.Exception) {
-//                    Log.d("TAG", "parseContent: ${e.message}")
-//                }
-//            } else
-//                final.append(text[i])
-//            i++
-//        }
-//
-//        Log.d("TAG", "parseContent: $final")
-//        post_content_full.text = final
-//    }
+
+    private fun replaceQuoteSpans(spannable: Spannable) {
+        val quoteSpans: Array<QuoteSpan> =
+            spannable.getSpans(0, spannable.length - 1, QuoteSpan::class.java)
+        for (quoteSpan in quoteSpans) {
+            val start: Int = spannable.getSpanStart(quoteSpan)
+            val end: Int = spannable.getSpanEnd(quoteSpan)
+            val flags: Int = spannable.getSpanFlags(quoteSpan)
+            spannable.removeSpan(quoteSpan)
+            spannable.setSpan(
+                CustomQuoteSpanClass(
+                    resources.getColor(R.color.Black),
+                    resources.getColor(R.color.blue_normal),
+                    10F,
+                    50F
+                ),
+                start,
+                end,
+                flags
+            )
+        }
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -268,6 +208,19 @@ class FullBlogActivity : AppCompatActivity() {
                     }
                 }
 
+            }
+            R.id.menu_blog_delete -> {
+                val postId = postData.getid()
+                val ref = FirebaseDatabase.getInstance().reference.child("posts").child(postId)
+                    .removeValue()
+                    .addOnCompleteListener {
+
+                        val postref = FirebaseDatabase.getInstance().reference.child("user-posts")
+                            .child(FirebaseAuth.getInstance().currentUser!!.uid).child(postId)
+                            .removeValue().addOnCompleteListener {
+                                finish()
+                            }
+                    }
             }
             R.id.full_blog_view_profile -> {
 
@@ -352,7 +305,17 @@ class FullBlogActivity : AppCompatActivity() {
         if (userId == "") {
             item.isVisible = false
         }
-
+        val report = menu.findItem(R.id.menu_blog_report_post)
+        val del = menu.findItem(R.id.menu_blog_delete)
+        if (postData.getuserId() != FirebaseAuth.getInstance().currentUser!!.uid) {
+            Log.d(
+                "TAG",
+                "  delete ${postData.getuserId()} +++ ${FirebaseAuth.getInstance().currentUser!!.uid}"
+            )
+            del.isVisible = false
+        } else {
+            report.isVisible = false
+        }
 
         return true
     }
@@ -366,10 +329,10 @@ class FullBlogActivity : AppCompatActivity() {
         val appLinkAction = intent.action
         val appLinkData: Uri? = intent.data
         if (Intent.ACTION_VIEW == appLinkAction) {
-            appLinkData?.lastPathSegment?.also { recipeId ->
-                Uri.parse("content://com.recipe_app/recipe/")
+            appLinkData?.lastPathSegment?.also {
+                Uri.parse("content://com.shaun.myblogger/posts/")
                     .buildUpon()
-                    .appendPath(recipeId)
+                    .appendPath(it)
                     .build().also { appData ->
                         Log.d("TAG", "handleIntent: ${appData.lastPathSegment}")
                         val postid = appData.lastPathSegment.toString()
@@ -424,5 +387,20 @@ class FullBlogActivity : AppCompatActivity() {
 
     }
 
+    fun ImageClick(html: Spannable) {
+        for (span in html.getSpans(0, html.length, ImageSpan::class.java)) {
+            val flags = html.getSpanFlags(span)
+            val start = html.getSpanStart(span)
+            val end = html.getSpanEnd(span)
+            html.setSpan(object : URLSpan(span.source) {
+                override fun onClick(v: View) {
+                    val intent = Intent(this@FullBlogActivity, ViewFullImage::class.java)
+                    intent.putExtra("url", span.source)
+                    intent.putExtra("0", "false")
+                    startActivity(intent)
+                }
+            }, start, end, flags)
+        }
+    }
 
 }

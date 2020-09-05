@@ -14,8 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RichTextActivity"></activity>
-        <activity android:name=".ProfileActivity" />
+
+    <activity android:name=".ProfileActivity" />
         <activity android:name=".ViewFullImage" />
         <activity
             android:name=".FirebaseHandler"
@@ -31,7 +31,7 @@
             android:name=".InsideActivities.FullBlogActivity"
             android:exported="true"
             android:launchMode="singleTop">
-            <tools:validation testUrl="https://my-blogger-sunny.herokuapp.com/posts/-MD8rBE6dubSWxfzMB" />
+            <tools:validation testUrl="https://blogger-sunny.herokuapp.com/posts/-MD8rBE6dubSWxfzMB" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="my-blogger-sunny.herokuapp.com"
+                    android:host="blogger-sunny.herokuapp.com"
                     android:pathPrefix="/posts/"
                     android:scheme="https" />
             </intent-filter>

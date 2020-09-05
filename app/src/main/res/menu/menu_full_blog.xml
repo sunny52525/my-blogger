@@ -8,6 +8,8 @@
     <item
         android:id="@+id/menu_blog_report_post"
         android:title="Report Post" />
-
+    <item
+        android:id="@+id/menu_blog_delete"
+        android:title="Delete" />
 
 </menu>

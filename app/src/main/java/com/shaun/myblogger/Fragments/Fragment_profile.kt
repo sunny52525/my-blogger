@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dinuscxj.refresh.RecyclerRefreshLayout
@@ -28,7 +29,7 @@ private const val TAG = "Profile Frag"
 
 class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
 
-    private val postAdapter = home_recyclerView(ArrayList(), this)
+    private val postAdapter = home_recyclerView(ArrayList(), this,lifecycleScope)
 
     var currentUserData: UserInfo? = null
     lateinit var ref: DatabaseReference
@@ -58,7 +59,7 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
                     .placeholder(resources.getDrawable(R.drawable.user))
                     .error(resources.getDrawable(R.drawable.user)).into(profile_photo_profile)
 
-                loadData(currentUserData?.getpostIDs())
+                loadData()
                 val recycerView = view.findViewById<RecyclerView>(R.id.recycler_view_profile)
                 recycerView.layoutManager = LinearLayoutManager(context)
                 recycerView.adapter = postAdapter
@@ -68,19 +69,19 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
         val refresh_layout_profile =
             view.findViewById<RecyclerRefreshLayout>(R.id.refresh_layout_profile)
         refresh_layout_profile.setOnRefreshListener {
-            loadData(currentUserData?.getpostIDs())
+            loadData()
             refresh_layout_profile.setRefreshing(true)
         }
 
         return view
     }
 
-    private fun loadData(postIds: ArrayList<String>?) {
+    private fun loadData() {
 
         val postList: ArrayList<PostData>
         postList = ArrayList()
 
-        val ref = FirebaseDatabase.getInstance().reference.child("posts")
+        val ref = FirebaseDatabase.getInstance().reference.child("user-posts").child(currentUserData!!.getid())
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
@@ -94,9 +95,11 @@ class Fragment_profile : Fragment(), home_recyclerView.OnPostClicked {
                         Log.d(ContentValues.TAG, "onDataChangeHOME: $singlePost")
                         Log.d(ContentValues.TAG, "onDataChangeHOME: ********************")
 
-                        if (postIds!!.contains(singlePost!!.getid())) {
+
+                        if (singlePost != null) {
                             postList.add(singlePost)
                         }
+
 
                     } catch (e: Exception) {
                         Log.e(TAG, "onDataChangeHOME: ${e.message}")

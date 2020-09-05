@@ -200,6 +200,7 @@ class FragmentSetting : Fragment() {
                 }
                 val intent = Intent(context, ViewFullImage::class.java)
                 intent.putExtra("url", photoUrl)
+                intent.putExtra("0", "true")
                 Log.d(TAG, "viewImage: ${userData!!.getPphoto()}")
                 startActivity(intent)
             }
