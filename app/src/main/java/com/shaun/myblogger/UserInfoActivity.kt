@@ -37,9 +37,9 @@ class UserInfoActivity : AppCompatActivity(), ProgressGenerator.OnCompleteListen
             override fun onClick(v: View?) {
                 if (user_info_name.text!!.isNotEmpty() && user_info_username.text!!.isNotEmpty()) {
                     progressGenerator.start(save_button)
-                    save_button.setEnabled(false)
-                    user_info_name.setEnabled(false)
-                    user_info_username.setEnabled(false)
+                    save_button.isEnabled = false
+                    user_info_name.isEnabled = false
+                    user_info_username.isEnabled = false
                     userIDExist(user_info_username.text.toString())
 
                 }else
@@ -71,7 +71,7 @@ class UserInfoActivity : AppCompatActivity(), ProgressGenerator.OnCompleteListen
            }
 
         refUsers= getInstance().reference.child("username").child(username)
-        refUsers.setValue(username)
+        refUsers.setValue(FirebaseAuth.getInstance().currentUser!!.uid)
 
     }
 
@@ -86,9 +86,9 @@ class UserInfoActivity : AppCompatActivity(), ProgressGenerator.OnCompleteListen
                     saveUserInfo(user_info_name.text.toString(),user_info_username.text.toString(),firebasUserID)
                 }else{
                     Toast.makeText(applicationContext, "Please Choose Unique Username", Toast.LENGTH_SHORT).show()
-                    save_button.setEnabled(true)
-                    user_info_name.setEnabled(true)
-                    user_info_username.setEnabled(true)
+                    save_button.isEnabled = true
+                    user_info_name.isEnabled = true
+                    user_info_username.isEnabled = true
 
                 }
             }
